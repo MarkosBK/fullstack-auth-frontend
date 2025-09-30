@@ -1,0 +1,12 @@
+{
+  "home": {
+    "welcome": "Welcome to the app!",
+    "description": "This app supports multiple languages."
+  },
+  "language": {
+    "selectTitle": "Select Language",
+    "selectSubtitle": "Choose your preferred app language",
+    "en": "English",
+    "ru": "Russian"
+  }
+}
