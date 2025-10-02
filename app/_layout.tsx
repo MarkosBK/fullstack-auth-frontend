@@ -1,5 +1,6 @@
 import { router, Stack } from 'expo-router';
 import { ThemeProvider, useTheme } from '../providers/ThemeProvider';
+import { ApiProvider } from '../providers/ApiProvider';
 import '../styles/global.css';
 import '@/i18n';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -46,8 +47,10 @@ const StackWithTheme = () => {
 
 export default function RootLayout() {
   return (
-    <ThemeProvider>
-      <StackWithTheme />
-    </ThemeProvider>
+    <ApiProvider>
+      <ThemeProvider>
+        <StackWithTheme />
+      </ThemeProvider>
+    </ApiProvider>
   );
 }
