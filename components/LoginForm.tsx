@@ -1,74 +1,50 @@
-import { useLogin, useLogout } from '@/lib/api/generated/authentication/authentication';
-import { useGetMe } from '@/lib/api/generated/users/users';
-import { apiClient } from '@/lib/api/client';
 import React from 'react';
 import { View, Text, TouchableOpacity, TextInput, Alert, Button } from 'react-native';
+import { useAuth } from '@/providers/AuthProvider';
+import { getErrorMessage } from '@/lib/utils/errorHandler';
 
 export function LoginForm() {
-  const { data: user, refetch: refetchProfile } = useGetMe({
-    query: {
-      enabled: false, // Отключаем автоматический запрос
-    },
-  });
-  const loginMutation = useLogin();
-  const logoutMutation = useLogout();
+  const { currentUser, isAuthenticated, isLoading, login, logout, refetchUser } = useAuth();
 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Ошибка', 'Заполните все поля');
       return;
     }
 
-    loginMutation.mutate(
-      { data: { email, password } },
-      {
-        onSuccess: async (response) => {
-          console.log('🔐 Login response:', response);
-
-          if (response.data.accessToken && response.data.refreshToken) {
-            await apiClient.setTokens(response.data.accessToken, response.data.refreshToken);
-          }
-
-          setIsLoggedIn(true);
-          refetchProfile();
-          Alert.alert('Успех', 'Вы успешно вошли в систему');
-        },
-        onError: (error: any) => {
-          console.error('❌ Login error:', error);
-          const errorMessage =
-            error?.response?.data?.error?.message || error?.message || 'Произошла ошибка';
-          Alert.alert('Ошибка', errorMessage);
-        },
-      }
-    );
+    try {
+      await login(email, password);
+      Alert.alert('Успех', 'Вы успешно вошли в систему');
+    } catch (error: any) {
+      const errorMessage = getErrorMessage(error);
+      Alert.alert('Ошибка', errorMessage);
+    }
   };
 
-  if (isLoggedIn && user) {
+  const handleLogout = async () => {
+    try {
+      await logout();
+      Alert.alert('Успех', 'Вы вышли из системы');
+    } catch (error: any) {
+      const errorMessage = getErrorMessage(error);
+      Alert.alert('Ошибка', errorMessage);
+    }
+  };
+
+  if (isAuthenticated && currentUser) {
     return (
       <View className="p-4">
         <Text className="mb-2 text-lg font-semibold">
-          Добро пожаловать, {user.data.displayName}!
+          Добро пожаловать, {currentUser.displayName || 'Пользователь'}!
         </Text>
-        <Text className="text-gray-600">{user.data.email}</Text>
-        <Button
-          title="Выйти"
-          onPress={() => {
-            logoutMutation.mutate();
-            setIsLoggedIn(false);
-            refetchProfile();
-          }}
-        />
+        <Text className="text-gray-600">{currentUser.email}</Text>
 
-        <Button
-          title="Запросить профиль"
-          onPress={() => {
-            refetchProfile();
-          }}
-        />
+        <Button title="Выйти" onPress={handleLogout} disabled={isLoading} />
+
+        <Button title="Обновить профиль" onPress={() => refetchUser()} disabled={isLoading} />
       </View>
     );
   }
@@ -91,20 +67,15 @@ export function LoginForm() {
         secureTextEntry
       />
       <TouchableOpacity
-        className={`rounded-lg bg-blue-500 p-3 ${loginMutation.isPending ? 'opacity-50' : ''}`}
+        className={`rounded-lg bg-blue-500 p-3 ${isLoading ? 'opacity-50' : ''}`}
         onPress={handleLogin}
-        disabled={loginMutation.isPending}>
+        disabled={isLoading}>
         <Text className="text-center font-semibold text-white">
-          {loginMutation.isPending ? 'Вход...' : 'Войти'}
+          {isLoading ? 'Вход...' : 'Войти'}
         </Text>
       </TouchableOpacity>
 
-      <Button
-        title="Запросить профиль"
-        onPress={() => {
-          refetchProfile();
-        }}
-      />
+      <Button title="Проверить профиль" onPress={() => refetchUser()} disabled={isLoading} />
     </View>
   );
 }

@@ -5,6 +5,7 @@ import '../styles/global.css';
 import '@/i18n';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native';
+import { AuthProvider } from '@/providers/AuthProvider';
 
 const StackWithTheme = () => {
   const { themeColors, isDark } = useTheme();
@@ -48,9 +49,11 @@ const StackWithTheme = () => {
 export default function RootLayout() {
   return (
     <ApiProvider>
-      <ThemeProvider>
-        <StackWithTheme />
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider>
+          <StackWithTheme />
+        </ThemeProvider>
+      </AuthProvider>
     </ApiProvider>
   );
 }
