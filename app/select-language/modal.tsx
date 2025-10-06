@@ -7,7 +7,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Title, TitleMedium } from '@/components/typography';
 import * as Haptics from 'expo-haptics';
 
-export default function Modal() {
+const Modal = () => {
   const { themeColors } = useTheme();
   const { t } = useTranslation();
 
@@ -54,7 +54,7 @@ export default function Modal() {
             }`}
             onPress={() => handleLanguageSelect(language.id)}>
             <View className="flex-row items-center">
-              <View className="bg-primary-500/10 mr-4 h-10 w-10 items-center justify-center rounded-full">
+              <View className="mr-4 h-10 w-10 items-center justify-center rounded-full bg-primary-500/10">
                 <Text className="text-2xl">{language.flag}</Text>
               </View>
 
@@ -76,4 +76,6 @@ export default function Modal() {
       </View>
     </View>
   );
-}
+};
+
+export default Modal;

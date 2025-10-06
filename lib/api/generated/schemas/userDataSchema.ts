@@ -5,6 +5,7 @@
  * Complete authentication and user management API for web and mobile applications. Supports JWT authentication, role-based access control, and user management with caching.
  * OpenAPI spec version: 1.0
  */
+import type { RoleDataSchema } from './roleDataSchema';
 
 export interface UserDataSchema {
   id: string;
@@ -15,4 +16,5 @@ export interface UserDataSchema {
   avatarUrl: string | null;
   createdAt: string;
   updatedAt: string;
+  roles: RoleDataSchema[];
 }

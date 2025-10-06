@@ -3,6 +3,8 @@ import { useGetMe } from '@/lib/api/generated/users/users';
 import { useLogin, useLogout } from '@/lib/api/generated/authentication/authentication';
 import { apiClient } from '@/lib/api/client';
 import { useQueryClient } from '@tanstack/react-query';
+import { type RouteConfig } from '@/lib/utils/paths';
+import { RoleName } from '@/lib/api/generated/schemas';
 
 type AuthProviderProps = {
   children: React.ReactNode;
@@ -29,6 +31,7 @@ const useProvideAuth = () => {
 
   const checkAuthStatus = useCallback(async () => {
     const token = await apiClient.getAccessToken();
+    console.log('token', token);
     if (token) {
       refetchUser();
     }
@@ -100,6 +103,63 @@ const useProvideAuth = () => {
     [isLoadingUser, loginMutation.isPending, logoutMutation.isPending]
   );
 
+  // Проверки ролей
+  const hasRole = useCallback(
+    (role: RoleName[]): boolean => {
+      const currentUser = userData?.data || null;
+      return currentUser?.roles?.some((r) => role.includes(r.name)) || false;
+    },
+    [userData]
+  );
+
+  // Проверка доступа к маршруту по конфигурации
+  const canAccessRoute = useCallback(
+    (routeConfig: RouteConfig): boolean => {
+      if (!routeConfig) return true;
+
+      // Проверка авторизации
+      if (routeConfig.auth && !isAuthenticated) {
+        return false;
+      }
+
+      // Проверка ролей
+      if (routeConfig.roles && routeConfig.roles.length > 0) {
+        const currentUser = userData?.data || null;
+        const userRoles = currentUser?.roles?.map((r) => r.name) || [];
+        const hasRequiredRole = routeConfig.roles.some((role) => userRoles.includes(role));
+
+        if (!hasRequiredRole) {
+          return false;
+        }
+      }
+
+      // Проверка разрешений (когда появятся на беке)
+      // if (routeConfig.permissions && routeConfig.permissions.length > 0) {
+      //   const currentUser = userData?.data || null;
+      //   const hasAllPermissions = routeConfig.permissions.every((permission) =>
+      //     currentUser?.permissions?.includes(permission)
+      //   );
+      //   if (!hasAllPermissions) {
+      //     return false;
+      //   }
+      // }
+
+      // Кастомная проверка
+      if (routeConfig.customCheck) {
+        const currentUser = userData?.data || null;
+        return routeConfig.customCheck(currentUser);
+      }
+
+      return true;
+    },
+    [isAuthenticated, userData]
+  );
+
+  // Проверки разрешений (когда появятся на беке)
+  // const hasPermission = useCallback((permission: string): boolean => {
+  //   return currentUser?.permissions?.includes(permission) || false;
+  // }, [currentUser]);
+
   return {
     currentUser: userData?.data || null,
     isAuthenticated,
@@ -107,6 +167,9 @@ const useProvideAuth = () => {
     login,
     logout,
     refetchUser,
+    // Проверки ролей и доступа
+    hasRole,
+    canAccessRoute,
   };
 };
 

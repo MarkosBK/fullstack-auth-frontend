@@ -5,8 +5,10 @@
  * Complete authentication and user management API for web and mobile applications. Supports JWT authentication, role-based access control, and user management with caching.
  * OpenAPI spec version: 1.0
  */
+import type { UserDataSchema } from './userDataSchema';
 
 export interface RefreshTokenDataSchema {
   accessToken: string;
   refreshToken: string;
+  user: UserDataSchema;
 }

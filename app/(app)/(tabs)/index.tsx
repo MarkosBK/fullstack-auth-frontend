@@ -1,11 +1,11 @@
 import { TouchableOpacity, View } from 'react-native';
-import ThemeToggle from '../../components/ThemeToggle';
-import { HeadlineLarge, LabelLarge } from '../../components/typography';
+import ThemeToggle from '@/components/ThemeToggle';
+import { HeadlineLarge, LabelLarge } from '@/components/typography';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
 import { paths } from '@/lib/utils/paths';
 
-export default function HomeScreen() {
+const HomeScreen = () => {
   const { t } = useTranslation();
 
   return (
@@ -15,9 +15,11 @@ export default function HomeScreen() {
 
       <TouchableOpacity
         className="mt-4 rounded-full bg-primary p-4"
-        onPress={() => router.push(paths.modals.selectLanguage())}>
+        onPress={() => router.push(paths.modals.selectLanguage.path)}>
         <LabelLarge>Modal</LabelLarge>
       </TouchableOpacity>
     </View>
   );
-}
+};
+
+export default HomeScreen;

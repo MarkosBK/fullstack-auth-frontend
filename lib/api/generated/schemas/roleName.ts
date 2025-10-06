@@ -7,6 +7,13 @@
  */
 
 /**
- * @nullable
+ * Название роли
  */
-export type UserDataSchemaDisplayName = { [key: string]: unknown } | null;
+export type RoleName = (typeof RoleName)[keyof typeof RoleName];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const RoleName = {
+  ADMIN: 'ADMIN',
+  CUSTOMER: 'CUSTOMER',
+  SIGNUP: 'SIGNUP',
+} as const;

@@ -1,47 +1,44 @@
-import { router, Stack } from 'expo-router';
+import { Stack } from 'expo-router';
 import { ThemeProvider, useTheme } from '../providers/ThemeProvider';
 import { ApiProvider } from '../providers/ApiProvider';
 import '../styles/global.css';
 import '@/i18n';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { TouchableOpacity } from 'react-native';
-import { AuthProvider } from '@/providers/AuthProvider';
+import { AuthProvider, useAuth } from '@/providers/AuthProvider';
+import { paths } from '@/lib/utils/paths';
+import { routeGuard } from '@/lib/guards/routeGuard';
 
 const StackWithTheme = () => {
   const { themeColors, isDark } = useTheme();
+  const { isLoading } = useAuth();
+  const canAccessSelectLanguage = routeGuard({ routeConfig: paths.modals.selectLanguage })();
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
-    <Stack
-      screenOptions={{
-        headerStyle: { backgroundColor: themeColors.background },
-        headerTitleStyle: { color: themeColors.text },
-        headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={24} color={themeColors.text} />
-          </TouchableOpacity>
-        ),
-      }}>
-      <Stack.Screen
-        name="(tabs)"
-        options={{
-          headerShown: false,
-          headerTitle: 'Theme Toggle',
-        }}
-      />
+    <Stack>
+      <Stack.Screen name="(app)" options={{ headerShown: false }} />
 
-      <Stack.Screen
-        name="select-language/modal"
-        options={{
-          presentation: 'formSheet',
-          animation: 'slide_from_bottom',
-          headerShown: false,
-          sheetAllowedDetents: 'fitToContents', /// [0.5]
-          sheetCornerRadius: 20,
-          contentStyle: {
-            backgroundColor: isDark ? themeColors['background-300'] : themeColors['background-600'],
-          },
-        }}
-      />
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+
+      <Stack.Protected guard={canAccessSelectLanguage}>
+        <Stack.Screen
+          name="select-language/modal"
+          options={{
+            presentation: 'formSheet',
+            animation: 'slide_from_bottom',
+            headerShown: false,
+            sheetAllowedDetents: 'fitToContents',
+            sheetCornerRadius: 20,
+            contentStyle: {
+              backgroundColor: isDark
+                ? themeColors['background-300']
+                : themeColors['background-600'],
+            },
+          }}
+        />
+      </Stack.Protected>
     </Stack>
   );
 };
