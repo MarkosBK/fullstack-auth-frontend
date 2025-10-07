@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useGetMe } from '@/lib/api/generated/users/users';
 import { useLogin, useLogout } from '@/lib/api/generated/authentication/authentication';
 import { apiClient } from '@/lib/api/client';
@@ -16,6 +16,7 @@ const useProvideAuth = () => {
   const queryClient = useQueryClient();
   const loginMutation = useLogin();
   const logoutMutation = useLogout();
+  const [isLoadingCallback, setIsLoadingCallback] = useState(false);
 
   const {
     data: userData,
@@ -31,7 +32,7 @@ const useProvideAuth = () => {
 
   const checkAuthStatus = useCallback(async () => {
     const token = await apiClient.getAccessToken();
-    console.log('token', token);
+
     if (token) {
       refetchUser();
     }
@@ -41,8 +42,20 @@ const useProvideAuth = () => {
     checkAuthStatus();
   }, [checkAuthStatus]);
 
+  const isAuthenticated = useMemo(() => !!userData && !userError, [userData, userError]);
+
+  useEffect(() => {
+    console.log('isAuthenticated', isAuthenticated);
+  }, [isAuthenticated]);
+
+  const isLoading = useMemo(
+    () => isLoadingUser || loginMutation.isPending || logoutMutation.isPending || isLoadingCallback,
+    [isLoadingUser, loginMutation.isPending, logoutMutation.isPending, isLoadingCallback]
+  );
+
   const login = useCallback(
     async (email: string, password: string): Promise<void> => {
+      setIsLoadingCallback(true);
       return new Promise((resolve, reject) => {
         loginMutation.mutate(
           { data: { email, password } },
@@ -60,9 +73,12 @@ const useProvideAuth = () => {
                 }
               } catch (error) {
                 reject(error);
+              } finally {
+                setIsLoadingCallback(false);
               }
             },
             onError: (error) => {
+              setIsLoadingCallback(false);
               reject(error);
             },
           }
@@ -73,6 +89,7 @@ const useProvideAuth = () => {
   );
 
   const logout = useCallback(async (): Promise<void> => {
+    setIsLoadingCallback(true);
     return new Promise((resolve, reject) => {
       logoutMutation.mutate(undefined, {
         onSuccess: async () => {
@@ -80,28 +97,23 @@ const useProvideAuth = () => {
             await apiClient.logout();
 
             queryClient.clear();
-
             resolve();
           } catch (error) {
             reject(error);
+          } finally {
+            setIsLoadingCallback(false);
           }
         },
         onError: (error) => {
           // Даже если логаут на сервере не удался, очищаем локальные данные
           apiClient.logout();
           queryClient.clear();
+          setIsLoadingCallback(false);
           reject(error);
         },
       });
     });
   }, [logoutMutation, queryClient]);
-
-  const isAuthenticated = useMemo(() => !!userData && !userError, [userData, userError]);
-
-  const isLoading = useMemo(
-    () => isLoadingUser || loginMutation.isPending || logoutMutation.isPending,
-    [isLoadingUser, loginMutation.isPending, logoutMutation.isPending]
-  );
 
   // Проверки ролей
   const hasRole = useCallback(

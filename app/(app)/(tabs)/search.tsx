@@ -1,14 +1,9 @@
-import ThemeToggle from '@/components/ThemeToggle';
-import { View } from 'react-native';
-import { HeadlineLarge } from '@/components/typography';
+import SearchScreen from '@/screens/search';
 
-const SearchScreen = () => {
+const Search = () => {
   return (
-    <View className="flex-1 items-center justify-center bg-background">
-      <HeadlineLarge className="mb-4">Search screen</HeadlineLarge>
-      <ThemeToggle />
-    </View>
+    <SearchScreen/>
   );
 };
 
-export default SearchScreen;
+export default Search;

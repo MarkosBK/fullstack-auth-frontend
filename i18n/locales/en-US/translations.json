@@ -8,5 +8,45 @@
     "selectSubtitle": "Choose your preferred app language",
     "en": "English",
     "ru": "Russian"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back! Glad to see you, Again!",
+      "subtitle": "Enter your credentials to access your account",
+      "email": "Enter your email",
+      "password": "Enter your password",
+      "forgotPassword": "Forgot Password?",
+      "button": "Login",
+      "noAccount": "Don't have an account? Register Now"
+    },
+    "register": {
+      "title": "Register",
+      "subtitle": "Hello! Register to get started",
+      "username": "Username",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "button": "Register",
+      "hasAccount": "Already have an account? Login Now"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password?",
+      "subtitle": "Don't worry! It occurs. Please enter the email address linked with your account.",
+      "email": "Email",
+      "button": "Send Code",
+      "rememberPassword": "Remember Password? Login"
+    },
+    "resetPassword": {
+      "title": "Create new password",
+      "subtitle": "Your new password must be unique from those previously used.",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "button": "Reset Password"
+    },
+    "passwordChanged": {
+      "title": "Password Changed",
+      "subtitle": "Password Changed! Your password has been changed successfully.",
+      "button": "Back to Login"
+    }
   }
 }

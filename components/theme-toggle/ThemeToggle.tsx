@@ -4,7 +4,7 @@ import Feather from '@expo/vector-icons/Feather';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { useEffect } from 'react';
 
-const ThemeToggle = () => {
+export const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === 'dark';
   const translateX = useSharedValue(isDark ? 46 : 3.5);
@@ -46,5 +46,3 @@ const Icon = (props: any) => {
     </View>
   );
 };
-
-export default ThemeToggle;

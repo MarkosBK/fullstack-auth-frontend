@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { colorScheme } from 'nativewind';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { themes } from '../styles/color-theme';
 import { colors } from '@/styles/colors';
 
@@ -14,6 +15,7 @@ type ThemeContextType = {
   toggleTheme: () => void;
   themeColors: Record<string, string>;
   isDark: boolean;
+  isLoading: boolean;
 };
 
 export const ThemeContext = createContext<ThemeContextType>({
@@ -21,10 +23,48 @@ export const ThemeContext = createContext<ThemeContextType>({
   toggleTheme: () => {},
   themeColors: colors.light,
   isDark: false,
+  isLoading: true,
 });
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
+  const [isLoading, setIsLoading] = useState(true);
+
+  const THEME_STORAGE_KEY = 'app_theme';
+
+  // Загружаем сохраненную тему при инициализации
+  useEffect(() => {
+    const loadSavedTheme = async () => {
+      try {
+        const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+        if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+          setCurrentTheme(savedTheme);
+          colorScheme.set(savedTheme);
+        }
+      } catch (error) {
+        console.error('Error loading theme from storage:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadSavedTheme();
+  }, []);
+
+  // Сохраняем тему при изменении
+  useEffect(() => {
+    if (!isLoading) {
+      const saveTheme = async () => {
+        try {
+          await AsyncStorage.setItem(THEME_STORAGE_KEY, currentTheme);
+        } catch (error) {
+          console.error('Error saving theme to storage:', error);
+        }
+      };
+
+      saveTheme();
+    }
+  }, [currentTheme, isLoading]);
 
   const themeColors = useMemo(() => {
     const colorsRes = colors[currentTheme];
@@ -48,7 +88,8 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   };
 
   return (
-    <ThemeContext.Provider value={{ theme: currentTheme, toggleTheme, themeColors, isDark }}>
+    <ThemeContext.Provider
+      value={{ theme: currentTheme, toggleTheme, themeColors, isDark, isLoading }}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <View style={themes[currentTheme]} className={'flex-1'}>
         {children}

@@ -16,7 +16,12 @@ const TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 
 // Типы ошибок (используем сгенерированные Orval)
-type ApiError = ValidationErrorSchema | ApiErrorSchema | NotFoundErrorSchema | ConflictErrorSchema;
+export type ApiError = { status: number } & (
+  | ValidationErrorSchema
+  | ApiErrorSchema
+  | NotFoundErrorSchema
+  | ConflictErrorSchema
+);
 
 class ApiClient {
   private client: AxiosInstance;
@@ -120,9 +125,13 @@ class ApiClient {
       const errorData = error.response.data as ApiErrorSchema;
 
       if (errorData?.error) {
-        return errorData;
+        return {
+          status: error.response.status,
+          ...errorData,
+        };
       } else {
         return {
+          status: error.response.status,
           success: false,
           error: {
             message: error.response.data?.message || 'Something went wrong',
@@ -135,6 +144,7 @@ class ApiClient {
     } else if (error.request) {
       // REQUEST SENT, BUT NO RESPONSE
       return {
+        status: error.response.status,
         success: false,
         error: {
           message: 'No connection to the server',
@@ -146,6 +156,7 @@ class ApiClient {
     } else {
       // SOMETHING WENT WRONG SETTING UP THE REQUEST
       return {
+        status: error.response.status,
         success: false,
         error: {
           message: error.message || 'Something went wrong',

@@ -6,9 +6,9 @@ export const routeGuard = (options: { routeConfig: RouteConfig }) => {
   return () => {
     const { isLoading, canAccessRoute } = useAuth();
 
-    if (isLoading) {
-      return false;
-    }
+    // if (isLoading) {
+    //   return false;
+    // }
 
     // Проверяем доступ по конфигурации маршрута
     if (options.routeConfig) {

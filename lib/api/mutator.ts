@@ -1,10 +1,10 @@
 import { apiClient } from './client';
+import { router } from 'expo-router';
+import { paths } from '@/lib/utils/paths';
 
 // Адаптер для Orval - связывает сгенерированные типы с вашим axios клиентом
 export const customInstance = async <T>(config: any): Promise<T> => {
   const { method, url, data, params } = config;
-
-  console.log('🚀 API Request:', { method, url, data, params });
 
   let response;
   try {
@@ -30,11 +30,15 @@ export const customInstance = async <T>(config: any): Promise<T> => {
 
     console.log('✅ API Response:', response);
 
-    // Всегда возвращаем response как есть (без извлечения data)
-    // Это означает, что сервер должен возвращать данные напрямую
     return response as T;
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ API Error:', error);
+
+    if (error.status === 401) {
+      await apiClient.logout();
+      router.replace(paths.auth.login.path);
+    }
+
     throw error;
   }
 };

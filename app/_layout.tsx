@@ -9,18 +9,18 @@ import { routeGuard } from '@/lib/guards/routeGuard';
 
 const StackWithTheme = () => {
   const { themeColors, isDark } = useTheme();
-  const { isLoading } = useAuth();
+  const { isAuthenticated } = useAuth();
   const canAccessSelectLanguage = routeGuard({ routeConfig: paths.modals.selectLanguage })();
-
-  if (isLoading) {
-    return null;
-  }
 
   return (
     <Stack>
-      <Stack.Screen name="(app)" options={{ headerShown: false }} />
+      <Stack.Protected guard={isAuthenticated}>
+        <Stack.Screen name="(app)" options={{ headerShown: false }} />
+      </Stack.Protected>
 
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Protected guard={!isAuthenticated}>
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      </Stack.Protected>
 
       <Stack.Protected guard={canAccessSelectLanguage}>
         <Stack.Screen
