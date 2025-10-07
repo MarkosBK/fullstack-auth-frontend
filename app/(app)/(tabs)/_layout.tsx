@@ -14,6 +14,7 @@ export default function TabsLayout() {
       tabBar={(props) => <TabBar {...props} />}
       screenOptions={({ route }) => ({
         headerShown: false,
+        tabBarHideOnKeyboard: true,
       })}>
       <Tabs.Protected guard={canAccessHome}>
         <Tabs.Screen

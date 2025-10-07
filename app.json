@@ -29,7 +29,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.markosbk.myexpoapp"
+      "package": "com.markosbk.myexpoapp",
+      "softwareKeyboardLayoutMode": "pan"
     }
   }
 }

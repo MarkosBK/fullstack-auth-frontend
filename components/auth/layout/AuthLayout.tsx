@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/providers/ThemeProvider';
+import KeyboardScrollView from '@/components/common/keyboard/KeyboardScrollView';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -25,6 +26,7 @@ export const AuthLayout = ({ children, showBackButton = true, onBackPress }: Aut
   return (
     <View className="flex-1">
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+
       <LinearGradient
         key={`gradient-${isDark ? 'dark' : 'light'}`}
         colors={[themeColors['background-300'], themeColors['background-700']]}
@@ -54,9 +56,8 @@ export const AuthLayout = ({ children, showBackButton = true, onBackPress }: Aut
       {/* Размытие сверху */}
       {/* <BlurView className="absolute left-0 right-0 top-0 h-full" intensity={40} tint={'dark'} /> */}
 
-      {/* Декоративный эллипс как в Figma */}
       {/* Контент */}
-      <View className="flex-1 px-6 pt-16">
+      <KeyboardScrollView className="flex-1 px-6 pt-16">
         {/* Навигация назад */}
         {showBackButton && (
           <TouchableOpacity
@@ -67,8 +68,8 @@ export const AuthLayout = ({ children, showBackButton = true, onBackPress }: Aut
         )}
 
         {/* Основной контент */}
-        <View className="flex-1 justify-center">{children}</View>
-      </View>
+        <View className="flex-1 justify-center py-16">{children}</View>
+      </KeyboardScrollView>
     </View>
   );
 };
