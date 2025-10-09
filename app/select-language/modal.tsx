@@ -5,7 +5,7 @@ import { changeLanguage } from '../../i18n';
 import { useTranslation } from 'react-i18next';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Title, TitleMedium } from '@/components/typography';
-import * as Haptics from 'expo-haptics';
+import { AppHaptics } from '@/lib/utils/haptics';
 
 const Modal = () => {
   const { themeColors } = useTheme();
@@ -27,7 +27,7 @@ const Modal = () => {
   ];
 
   const handleLanguageSelect = async (languageId: string) => {
-    Haptics.selectionAsync();
+    AppHaptics.selection();
     // TODO: remove setTimeout (smooth transition)
     setTimeout(() => {
       changeLanguage(languageId);

@@ -17,7 +17,8 @@
       "password": "Enter your password",
       "forgotPassword": "Forgot Password?",
       "button": "Login",
-      "noAccount": "Don't have an account? Register Now"
+      "noAccount": "Don't have an account?",
+      "registerNow": "Register Now"
     },
     "register": {
       "title": "Register",
@@ -47,6 +48,21 @@
       "title": "Password Changed",
       "subtitle": "Password Changed! Your password has been changed successfully.",
       "button": "Back to Login"
+    }
+  },
+  "validation": {
+    "email": {
+      "required": "Email is required",
+      "invalid": "Invalid email format"
+    },
+    "password": {
+      "required": "Password is required",
+      "minLength": "Password must contain at least 6 characters",
+      "complexity": "Password must contain uppercase letter, lowercase letter and number"
+    },
+    "confirmPassword": {
+      "required": "Password confirmation is required",
+      "mismatch": "Passwords do not match"
     }
   }
 }

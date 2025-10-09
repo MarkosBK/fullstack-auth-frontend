@@ -8,11 +8,38 @@ import { paths } from '@/lib/utils/paths';
 import { routeGuard } from '@/lib/guards/routeGuard';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { StatusBarBlured } from '@/components/common';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+
+// Set the animation options. This is optional.
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+});
+
+SplashScreen.preventAutoHideAsync();
 
 const StackWithTheme = () => {
   const { themeColors, isDark } = useTheme();
   const { isAuthenticated } = useAuth();
   const canAccessSelectLanguage = routeGuard({ routeConfig: paths.modals.selectLanguage })();
+
+  useEffect(() => {
+    async function prepare() {
+      try {
+        // Здесь можно выполнить предварительные загрузки данных
+        // Например: загрузка шрифтов, инициализация API, проверка аутентификации
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Минимальная задержка
+      } catch (e) {
+        console.warn('Ошибка при подготовке приложения:', e);
+      } finally {
+        // Скрываем splash screen после завершения подготовки
+        await SplashScreen.hideAsync();
+      }
+    }
+
+    prepare();
+  }, []);
 
   return (
     <>

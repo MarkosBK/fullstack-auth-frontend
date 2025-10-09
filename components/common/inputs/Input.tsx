@@ -35,9 +35,9 @@ export const Input = React.forwardRef<TextInput, InputProps>(
     };
 
     const errorClasses = {
-      default: 'border-error-500',
-      outlined: 'border-error-500',
-      glass: 'border-error-500',
+      default: 'bg-error-500/5',
+      outlined: 'bg-error-500/5',
+      glass: 'bg-error-500/5',
     };
 
     const isPassword = secureTextEntry;

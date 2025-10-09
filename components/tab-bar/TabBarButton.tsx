@@ -2,8 +2,8 @@ import { Pressable, PressableProps, View } from 'react-native';
 import { useEffect } from 'react';
 import { icons } from './icons';
 import { useSharedValue, withSpring } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
 import { LabelSmall } from '../typography';
+import { AppHaptics } from '@/lib/utils/haptics';
 
 export const TabBarButton = ({
   isFocused,
@@ -27,7 +27,7 @@ export const TabBarButton = ({
 
   const handlePress = (event: any) => {
     if (!isFocused) {
-      Haptics.selectionAsync();
+      AppHaptics.navigation();
     }
     if (props.onPress) {
       props.onPress(event);

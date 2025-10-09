@@ -25,8 +25,8 @@ const useProvideAuth = () => {
     error: userError,
   } = useGetMe({
     query: {
-      enabled: false, // Не загружаем автоматически
-      retry: false, // Не повторяем при ошибке
+      enabled: false, // not load automatically (on render)
+      retry: false, // not retry on error
     },
   });
 
@@ -44,10 +44,6 @@ const useProvideAuth = () => {
 
   const isAuthenticated = useMemo(() => !!userData && !userError, [userData, userError]);
 
-  useEffect(() => {
-    console.log('isAuthenticated', isAuthenticated);
-  }, [isAuthenticated]);
-
   const isLoading = useMemo(
     () => isLoadingUser || loginMutation.isPending || logoutMutation.isPending || isLoadingCallback,
     [isLoadingUser, loginMutation.isPending, logoutMutation.isPending, isLoadingCallback]
@@ -58,7 +54,7 @@ const useProvideAuth = () => {
       setIsLoadingCallback(true);
       return new Promise((resolve, reject) => {
         loginMutation.mutate(
-          { data: { email, password } },
+          { data: { email: email.trim(), password: password.trim() } },
           {
             onSuccess: async (response) => {
               try {
@@ -105,7 +101,6 @@ const useProvideAuth = () => {
           }
         },
         onError: (error) => {
-          // Даже если логаут на сервере не удался, очищаем локальные данные
           apiClient.logout();
           queryClient.clear();
           setIsLoadingCallback(false);
@@ -115,7 +110,6 @@ const useProvideAuth = () => {
     });
   }, [logoutMutation, queryClient]);
 
-  // Проверки ролей
   const hasRole = useCallback(
     (role: RoleName[]): boolean => {
       const currentUser = userData?.data || null;
@@ -124,17 +118,14 @@ const useProvideAuth = () => {
     [userData]
   );
 
-  // Проверка доступа к маршруту по конфигурации
   const canAccessRoute = useCallback(
     (routeConfig: RouteConfig): boolean => {
       if (!routeConfig) return true;
 
-      // Проверка авторизации
       if (routeConfig.auth && !isAuthenticated) {
         return false;
       }
 
-      // Проверка ролей
       if (routeConfig.roles && routeConfig.roles.length > 0) {
         const currentUser = userData?.data || null;
         const userRoles = currentUser?.roles?.map((r) => r.name) || [];
@@ -145,7 +136,7 @@ const useProvideAuth = () => {
         }
       }
 
-      // Проверка разрешений (когда появятся на беке)
+      // check permissions (when they will be on the server)
       // if (routeConfig.permissions && routeConfig.permissions.length > 0) {
       //   const currentUser = userData?.data || null;
       //   const hasAllPermissions = routeConfig.permissions.every((permission) =>
@@ -156,7 +147,6 @@ const useProvideAuth = () => {
       //   }
       // }
 
-      // Кастомная проверка
       if (routeConfig.customCheck) {
         const currentUser = userData?.data || null;
         return routeConfig.customCheck(currentUser);
@@ -167,7 +157,7 @@ const useProvideAuth = () => {
     [isAuthenticated, userData]
   );
 
-  // Проверки разрешений (когда появятся на беке)
+  // check permissions (when they will be on the server)
   // const hasPermission = useCallback((permission: string): boolean => {
   //   return currentUser?.permissions?.includes(permission) || false;
   // }, [currentUser]);
@@ -179,7 +169,6 @@ const useProvideAuth = () => {
     login,
     logout,
     refetchUser,
-    // Проверки ролей и доступа
     hasRole,
     canAccessRoute,
   };
