@@ -20,40 +20,14 @@ module.exports = {
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
-      fontFamily: {
-        'inter-light': ['Inter_300Light'],
-        'inter-regular': ['Inter_400Regular'],
-        'inter-medium': ['Inter_500Medium'],
-        'inter-semibold': ['Inter_600SemiBold'],
-        'inter-bold': ['Inter_700Bold'],
-        'inter-extrabold': ['Inter_800ExtraBold'],
-      },
-      fontSize: {
-        // Display sizes
-        'display-large': ['57px', { lineHeight: '64px', letterSpacing: '-0.25px' }],
-        'display-medium': ['45px', { lineHeight: '52px', letterSpacing: '0px' }],
-        'display-small': ['36px', { lineHeight: '44px', letterSpacing: '0px' }],
-
-        // Headline sizes
-        'headline-large': ['32px', { lineHeight: '40px', letterSpacing: '0px' }],
-        'headline-medium': ['28px', { lineHeight: '36px', letterSpacing: '0px' }],
-        'headline-small': ['24px', { lineHeight: '32px', letterSpacing: '0px' }],
-
-        // Title sizes
-        'title-large': ['22px', { lineHeight: '28px', letterSpacing: '0px' }],
-        'title-medium': ['16px', { lineHeight: '24px', letterSpacing: '0.15px' }],
-        'title-small': ['14px', { lineHeight: '20px', letterSpacing: '0.1px' }],
-
-        // Body sizes
-        'body-large': ['16px', { lineHeight: '24px', letterSpacing: '0.5px' }],
-        'body-medium': ['14px', { lineHeight: '20px', letterSpacing: '0.25px' }],
-        'body-small': ['12px', { lineHeight: '16px', letterSpacing: '0.4px' }],
-
-        // Label sizes
-        'label-large': ['14px', { lineHeight: '20px', letterSpacing: '0.1px' }],
-        'label-medium': ['12px', { lineHeight: '16px', letterSpacing: '0.5px' }],
-        'label-small': ['11px', { lineHeight: '16px', letterSpacing: '0.5px' }],
-      },
+      // fontFamily: {
+      //   'inter-light': ['Inter_300Light'],
+      //   'inter-regular': ['Inter_400Regular'],
+      //   'inter-medium': ['Inter_500Medium'],
+      //   'inter-semibold': ['Inter_600SemiBold'],
+      //   'inter-bold': ['Inter_700Bold'],
+      //   'inter-extrabold': ['Inter_800ExtraBold'],
+      // },
       colors: {
         primary: {
           DEFAULT: withOpacity('--color-primary'),

@@ -28,7 +28,8 @@
       "password": "Пароль",
       "confirmPassword": "Подтвердите пароль",
       "button": "Зарегистрироваться",
-      "hasAccount": "Уже есть аккаунт? Войти"
+      "hasAccount": "Уже есть аккаунт?",
+      "loginNow": "Войти"
     },
     "forgotPassword": {
       "title": "Забыли пароль?",

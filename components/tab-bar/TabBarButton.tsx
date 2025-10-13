@@ -1,11 +1,11 @@
+import React, { useEffect } from 'react';
 import { Pressable, PressableProps, View } from 'react-native';
-import { useEffect } from 'react';
 import { icons } from './icons';
 import { useSharedValue, withSpring } from 'react-native-reanimated';
 import { LabelSmall } from '../typography';
 import { AppHaptics } from '@/lib/utils/haptics';
 
-export const TabBarButton = ({
+export const TabBarButton = React.memo(({
   isFocused,
   routeName,
   color,
@@ -50,6 +50,8 @@ export const TabBarButton = ({
       </LabelSmall>
     </Pressable>
   );
-};
+});
+
+TabBarButton.displayName = 'TabBarButton';
 
 export default TabBarButton;

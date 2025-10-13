@@ -28,7 +28,8 @@
       "password": "Password",
       "confirmPassword": "Confirm password",
       "button": "Register",
-      "hasAccount": "Already have an account? Login Now"
+      "hasAccount": "Already have an account?",
+      "loginNow": "Login Now"
     },
     "forgotPassword": {
       "title": "Forgot Password?",

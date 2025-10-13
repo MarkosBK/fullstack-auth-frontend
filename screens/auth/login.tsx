@@ -1,20 +1,21 @@
-import { useCallback } from 'react';
-import { View, Alert } from 'react-native';
+import { useCallback, useState } from 'react';
+import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/providers/AuthProvider';
-import { getErrorMessage } from '@/lib/utils/errorHandler';
 import { AppHaptics } from '@/lib/utils/haptics';
 import { paths } from '@/lib/utils/paths';
 import { AuthLayout } from '@/screens/auth/layout';
-import { Input, Button, Link } from '@/components/common';
+import { Input, Button, Link, ServerError } from '@/components/common';
 import { BodyMedium, HeadlineLarge } from '@/components/typography';
 import { createLoginValidationSchema, type LoginFormData } from './validation';
+import { ApiError } from '@/lib/api/client';
 
 const LoginScreen = () => {
   const { t } = useTranslation();
   const { login, isLoading } = useAuth();
+  const [serverError, setServerError] = useState<ApiError | null>(null);
 
   const loginValidationSchema = createLoginValidationSchema(t);
 
@@ -34,6 +35,7 @@ const LoginScreen = () => {
   const onSubmit = useCallback(
     async (data: LoginFormData) => {
       AppHaptics.buttonPress();
+      setServerError(null); // Очищаем предыдущие ошибки
 
       const validationResult = loginValidationSchema.safeParse(data);
       if (!validationResult.success) {
@@ -46,8 +48,8 @@ const LoginScreen = () => {
         AppHaptics.success();
       } catch (error: any) {
         AppHaptics.error();
-        const errorMessage = getErrorMessage(error);
-        Alert.alert('Ошибка', errorMessage);
+        setServerError(error); // Устанавливаем ошибку сервера
+        console.log('error', error);
       }
     },
     [login, loginValidationSchema]
@@ -100,6 +102,11 @@ const LoginScreen = () => {
         <Link href={paths.auth.forgotPassword.path} className="mb-10 self-end">
           {t('auth.login.forgotPassword')}
         </Link>
+
+        <ServerError 
+          error={serverError} 
+          onDismiss={() => setServerError(null)} 
+        />
 
         <Button size="large" loading={isLoading} onPress={handleSubmit(onSubmit)} className="mb-10">
           {t('auth.login.button')}

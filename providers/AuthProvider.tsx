@@ -1,6 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useGetMe } from '@/lib/api/generated/users/users';
-import { useLogin, useLogout } from '@/lib/api/generated/authentication/authentication';
+import {
+  useLogin,
+  useLogout,
+  useRegister,
+} from '@/lib/api/generated/authentication/authentication';
 import { apiClient } from '@/lib/api/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { type RouteConfig } from '@/lib/utils/paths';
@@ -16,6 +20,7 @@ const useProvideAuth = () => {
   const queryClient = useQueryClient();
   const loginMutation = useLogin();
   const logoutMutation = useLogout();
+  const registerMutation = useRegister();
   const [isLoadingCallback, setIsLoadingCallback] = useState(false);
 
   const {
@@ -45,8 +50,19 @@ const useProvideAuth = () => {
   const isAuthenticated = useMemo(() => !!userData && !userError, [userData, userError]);
 
   const isLoading = useMemo(
-    () => isLoadingUser || loginMutation.isPending || logoutMutation.isPending || isLoadingCallback,
-    [isLoadingUser, loginMutation.isPending, logoutMutation.isPending, isLoadingCallback]
+    () =>
+      isLoadingUser ||
+      loginMutation.isPending ||
+      logoutMutation.isPending ||
+      registerMutation.isPending ||
+      isLoadingCallback,
+    [
+      isLoadingUser,
+      loginMutation.isPending,
+      logoutMutation.isPending,
+      registerMutation.isPending,
+      isLoadingCallback,
+    ]
   );
 
   const login = useCallback(
@@ -82,6 +98,41 @@ const useProvideAuth = () => {
       });
     },
     [loginMutation, queryClient, refetchUser]
+  );
+
+  const register = useCallback(
+    async (email: string, password: string, confirmPassword: string): Promise<void> => {
+      setIsLoadingCallback(true);
+      return new Promise((resolve, reject) => {
+        registerMutation.mutate(
+          { data: { email: email.trim(), password: password.trim() } },
+          {
+            onSuccess: async (response) => {
+              try {
+                if (response.data.accessToken && response.data.refreshToken) {
+                  await apiClient.setTokens(response.data.accessToken, response.data.refreshToken);
+                  await refetchUser();
+                  queryClient.invalidateQueries();
+
+                  resolve();
+                } else {
+                  reject(new Error('Tokens not received'));
+                }
+              } catch (error) {
+                reject(error);
+              } finally {
+                setIsLoadingCallback(false);
+              }
+            },
+            onError: (error) => {
+              setIsLoadingCallback(false);
+              reject(error);
+            },
+          }
+        );
+      });
+    },
+    [registerMutation, queryClient, refetchUser]
   );
 
   const logout = useCallback(async (): Promise<void> => {
@@ -167,6 +218,7 @@ const useProvideAuth = () => {
     isAuthenticated,
     isLoading,
     login,
+    register,
     logout,
     refetchUser,
     hasRole,

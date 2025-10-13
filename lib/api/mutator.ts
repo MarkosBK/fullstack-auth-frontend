@@ -35,8 +35,12 @@ export const customInstance = async <T>(config: any): Promise<T> => {
     console.error('❌ API Error:', error);
 
     if (error.status === 401) {
-      await apiClient.logout();
-      router.replace(paths.auth.login.path);
+      const isAuthEndpoint = url?.includes('/auth/');
+      
+      if (!isAuthEndpoint) {
+        await apiClient.logout();
+        router.replace(paths.auth.login.path);
+      }
     }
 
     throw error;
