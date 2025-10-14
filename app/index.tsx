@@ -9,5 +9,5 @@ export default function Index() {
     return <Redirect href={paths.app.home.path} />;
   }
 
-  return <Redirect href={paths.auth.login.path} />;
+  return <Redirect href={paths.auth.signIn.path} />;
 }

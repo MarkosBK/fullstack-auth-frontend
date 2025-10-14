@@ -1,6 +1,6 @@
-import { View, Text } from "react-native";
+import { View, Text } from 'react-native';
 
-const ForgotPasswordScreen = () => {
+const ResetPasswordRequestScreen = () => {
   return (
     <View className="flex-1 items-center justify-center p-4">
       <Text className="mb-2 text-xl font-semibold">Восстановление пароля</Text>
@@ -11,4 +11,4 @@ const ForgotPasswordScreen = () => {
   );
 };
 
-export default ForgotPasswordScreen;
+export default ResetPasswordRequestScreen;

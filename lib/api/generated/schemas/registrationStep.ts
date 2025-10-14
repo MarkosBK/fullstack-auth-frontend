@@ -7,13 +7,12 @@
  */
 
 /**
- * Array of user roles
+ * Current registration step
  */
-export type RoleName = (typeof RoleName)[keyof typeof RoleName];
+export type RegistrationStep = (typeof RegistrationStep)[keyof typeof RegistrationStep];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const RoleName = {
-  ADMIN: 'ADMIN',
-  CUSTOMER: 'CUSTOMER',
-  SIGNUP: 'SIGNUP',
+export const RegistrationStep = {
+  EMAIL_OTP_VERIFICATION: 'EMAIL_OTP_VERIFICATION',
+  COMPLETED: 'COMPLETED',
 } as const;

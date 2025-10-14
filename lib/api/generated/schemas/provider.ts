@@ -7,13 +7,12 @@
  */
 
 /**
- * Array of user roles
+ * Account provider
  */
-export type RoleName = (typeof RoleName)[keyof typeof RoleName];
+export type Provider = (typeof Provider)[keyof typeof Provider];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const RoleName = {
-  ADMIN: 'ADMIN',
-  CUSTOMER: 'CUSTOMER',
-  SIGNUP: 'SIGNUP',
+export const Provider = {
+  LOCAL: 'LOCAL',
+  GOOGLE: 'GOOGLE',
 } as const;

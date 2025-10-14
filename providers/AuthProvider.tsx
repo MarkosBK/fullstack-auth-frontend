@@ -1,26 +1,37 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useGetMe } from '@/lib/api/generated/users/users';
 import {
-  useLogin,
   useLogout,
-  useRegister,
+  useSignIn,
+  useSignUp,
+  useSignUpVerify,
 } from '@/lib/api/generated/authentication/authentication';
 import { apiClient } from '@/lib/api/client';
 import { useQueryClient } from '@tanstack/react-query';
-import { type RouteConfig } from '@/lib/utils/paths';
-import { RoleName } from '@/lib/api/generated/schemas';
+import { paths, type RouteConfig } from '@/lib/utils/paths';
+import { RegistrationStep, RoleName } from '@/lib/api/generated/schemas';
+import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type AuthProviderProps = {
   children: React.ReactNode;
 };
 
+export const REGISTRATION_USER_KEY = '@registration_user';
+export type RegistrationUser = {
+  email: string;
+  displayName: string;
+};
+
 const AuthContext = createContext<ReturnType<typeof useProvideAuth> | undefined>(undefined);
 
 const useProvideAuth = () => {
+  const router = useRouter();
   const queryClient = useQueryClient();
-  const loginMutation = useLogin();
+  const loginMutation = useSignIn();
   const logoutMutation = useLogout();
-  const registerMutation = useRegister();
+  const registerMutation = useSignUp();
+  const verifyOTPMutation = useSignUpVerify();
   const [isLoadingCallback, setIsLoadingCallback] = useState(false);
 
   const {
@@ -55,12 +66,14 @@ const useProvideAuth = () => {
       loginMutation.isPending ||
       logoutMutation.isPending ||
       registerMutation.isPending ||
+      verifyOTPMutation.isPending ||
       isLoadingCallback,
     [
       isLoadingUser,
       loginMutation.isPending,
       logoutMutation.isPending,
       registerMutation.isPending,
+      verifyOTPMutation.isPending,
       isLoadingCallback,
     ]
   );
@@ -101,22 +114,31 @@ const useProvideAuth = () => {
   );
 
   const register = useCallback(
-    async (email: string, password: string, confirmPassword: string): Promise<void> => {
+    async (email: string, password: string, displayName: string): Promise<void> => {
       setIsLoadingCallback(true);
       return new Promise((resolve, reject) => {
         registerMutation.mutate(
-          { data: { email: email.trim(), password: password.trim() } },
+          {
+            data: {
+              email: email.trim(),
+              password: password.trim(),
+              displayName: displayName.trim(),
+            },
+          },
           {
             onSuccess: async (response) => {
               try {
-                if (response.data.accessToken && response.data.refreshToken) {
-                  await apiClient.setTokens(response.data.accessToken, response.data.refreshToken);
-                  await refetchUser();
-                  queryClient.invalidateQueries();
-
+                if (response.data.step === RegistrationStep.EMAIL_OTP_VERIFICATION) {
+                  AsyncStorage.setItem(
+                    REGISTRATION_USER_KEY,
+                    JSON.stringify({ email, displayName })
+                  );
+                  router.push(paths.auth.signUpVerify.path);
+                  resolve();
+                } else if (response.data.step === 'COMPLETED') {
                   resolve();
                 } else {
-                  reject(new Error('Tokens not received'));
+                  reject(new Error('Unknown registration step'));
                 }
               } catch (error) {
                 reject(error);
@@ -132,7 +154,50 @@ const useProvideAuth = () => {
         );
       });
     },
-    [registerMutation, queryClient, refetchUser]
+    [registerMutation, router]
+  );
+
+  const verifyOTP = useCallback(
+    async (otpCode: string): Promise<void> => {
+      setIsLoadingCallback(true);
+      const userNotParsed = await AsyncStorage.getItem(REGISTRATION_USER_KEY);
+      const user: RegistrationUser | null = userNotParsed ? JSON.parse(userNotParsed) : null;
+
+      if (!user) {
+        router.push(paths.auth.signUp.path);
+        return;
+      }
+
+      return new Promise((resolve, reject) => {
+        verifyOTPMutation.mutate(
+          { data: { email: user.email.trim(), otpCode: otpCode.trim() } },
+          {
+            onSuccess: async (response) => {
+              try {
+                if (response.data.accessToken && response.data.refreshToken) {
+                  await apiClient.setTokens(response.data.accessToken, response.data.refreshToken);
+                  await refetchUser();
+                  queryClient.invalidateQueries();
+                  AsyncStorage.removeItem(REGISTRATION_USER_KEY);
+                } else {
+                  reject(new Error('Tokens not received'));
+                }
+                resolve();
+              } catch (error) {
+                reject(error);
+              } finally {
+                setIsLoadingCallback(false);
+              }
+            },
+            onError: (error) => {
+              setIsLoadingCallback(false);
+              reject(error);
+            },
+          }
+        );
+      });
+    },
+    [queryClient, refetchUser, router, verifyOTPMutation]
   );
 
   const logout = useCallback(async (): Promise<void> => {
@@ -164,7 +229,7 @@ const useProvideAuth = () => {
   const hasRole = useCallback(
     (role: RoleName[]): boolean => {
       const currentUser = userData?.data || null;
-      return currentUser?.roles?.some((r) => role.includes(r.name)) || false;
+      return currentUser?.roles?.some((roleName) => role.includes(roleName)) || false;
     },
     [userData]
   );
@@ -179,7 +244,7 @@ const useProvideAuth = () => {
 
       if (routeConfig.roles && routeConfig.roles.length > 0) {
         const currentUser = userData?.data || null;
-        const userRoles = currentUser?.roles?.map((r) => r.name) || [];
+        const userRoles = currentUser?.roles || [];
         const hasRequiredRole = routeConfig.roles.some((role) => userRoles.includes(role));
 
         if (!hasRequiredRole) {
@@ -219,6 +284,7 @@ const useProvideAuth = () => {
     isLoading,
     login,
     register,
+    verifyOTP,
     logout,
     refetchUser,
     hasRole,

@@ -14,18 +14,23 @@ export interface RouteConfig {
 export const paths = {
   // Auth routes
   auth: {
-    login: {
-      path: '/(auth)/login' as Href,
+    signIn: {
+      path: '/(auth)/sign-in' as Href,
       auth: false,
       redirectTo: '/(app)/(tabs)/index',
     },
-    register: {
-      path: '/(auth)/register' as Href,
+    signUp: {
+      path: '/(auth)/sign-up' as Href,
       auth: false,
       redirectTo: '/(app)/(tabs)/index',
     },
-    forgotPassword: {
-      path: '/(auth)/forgot-password' as Href,
+    resetPasswordRequest: {
+      path: '/(auth)/reset-password-request' as Href,
+      auth: false,
+      redirectTo: '/(app)/(tabs)/index',
+    },
+    signUpVerify: {
+      path: '/(auth)/sign-up-verify' as Href,
       auth: false,
       redirectTo: '/(app)/(tabs)/index',
     },

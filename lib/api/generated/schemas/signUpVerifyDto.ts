@@ -6,7 +6,9 @@
  * OpenAPI spec version: 1.0
  */
 
-export interface LoginDto {
+export interface SignUpVerifyDto {
+  /** User email from registration start response */
   email: string;
-  password: string;
+  /** 6-digit OTP code from email */
+  otpCode: string;
 }

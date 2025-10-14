@@ -6,14 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 
-/**
- * Array of user roles
- */
-export type RoleName = (typeof RoleName)[keyof typeof RoleName];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const RoleName = {
-  ADMIN: 'ADMIN',
-  CUSTOMER: 'CUSTOMER',
-  SIGNUP: 'SIGNUP',
-} as const;
+export interface ResetPasswordDataSchema {
+  email: string;
+  message: string;
+}

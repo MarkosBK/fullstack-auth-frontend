@@ -3,9 +3,9 @@ import { paths } from '@/lib/utils/paths';
 import { Stack } from 'expo-router';
 
 export default function AuthLayout() {
-  const canAccessLogin = routeGuard({ routeConfig: paths.auth.login })();
-  const canAccessRegister = routeGuard({ routeConfig: paths.auth.register })();
-  const canAccessForgotPassword = routeGuard({ routeConfig: paths.auth.forgotPassword })();
+  const canAccessLogin = routeGuard({ routeConfig: paths.auth.signIn })();
+  const canAccessRegister = routeGuard({ routeConfig: paths.auth.signUp })();
+  const canAccessForgotPassword = routeGuard({ routeConfig: paths.auth.resetPasswordRequest })();
 
   return (
     <Stack
@@ -13,13 +13,13 @@ export default function AuthLayout() {
         headerShown: false,
       }}>
       <Stack.Protected guard={canAccessLogin}>
-        <Stack.Screen name="login" />
+        <Stack.Screen name="sign-in" />
       </Stack.Protected>
       <Stack.Protected guard={canAccessRegister}>
-        <Stack.Screen name="register" />
+        <Stack.Screen name="sign-up" />
       </Stack.Protected>
       <Stack.Protected guard={canAccessForgotPassword}>
-        <Stack.Screen name="forgot-password" />
+        <Stack.Screen name="reset-password-request" />
       </Stack.Protected>
     </Stack>
   );

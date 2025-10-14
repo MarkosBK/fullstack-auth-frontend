@@ -1315,7 +1315,7 @@ export function useGetUser<
 export const updateUser = (id: string, updateUserDto: UpdateUserDto) => {
   return customInstance<UserResponseSchema>({
     url: `/v1/users/${id}`,
-    method: 'PUT',
+    method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     data: updateUserDto,
   });

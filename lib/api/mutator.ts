@@ -36,10 +36,10 @@ export const customInstance = async <T>(config: any): Promise<T> => {
 
     if (error.status === 401) {
       const isAuthEndpoint = url?.includes('/auth/');
-      
+
       if (!isAuthEndpoint) {
         await apiClient.logout();
-        router.replace(paths.auth.login.path);
+        router.replace(paths.auth.signIn.path);
       }
     }
 

@@ -12,7 +12,7 @@ import { BodyMedium, HeadlineLarge } from '@/components/typography';
 import { createLoginValidationSchema, type LoginFormData } from './validation';
 import { ApiError } from '@/lib/api/client';
 
-const LoginScreen = () => {
+const SignInScreen = () => {
   const { t } = useTranslation();
   const { login, isLoading } = useAuth();
   const [serverError, setServerError] = useState<ApiError | null>(null);
@@ -99,20 +99,17 @@ const LoginScreen = () => {
           />
         </View>
 
-        <Link href={paths.auth.forgotPassword.path} className="mb-10 self-end">
+        <Link href={paths.auth.resetPasswordRequest.path} className="mb-10 self-end">
           {t('auth.login.forgotPassword')}
         </Link>
 
-        <ServerError 
-          error={serverError} 
-          onDismiss={() => setServerError(null)} 
-        />
+        <ServerError error={serverError} onDismiss={() => setServerError(null)} />
 
         <Button size="large" loading={isLoading} onPress={handleSubmit(onSubmit)} className="mb-10">
           {t('auth.login.button')}
         </Button>
 
-        <Link href={paths.auth.register.path} replace className="self-center">
+        <Link href={paths.auth.signUp.path} replace className="self-center">
           <View className="flex flex-row gap-2">
             <BodyMedium className="font-medium">{t('auth.login.noAccount')}</BodyMedium>
             <BodyMedium className="font-medium text-primary-500">
@@ -125,4 +122,4 @@ const LoginScreen = () => {
   );
 };
 
-export default LoginScreen;
+export default SignInScreen;

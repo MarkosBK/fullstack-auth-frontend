@@ -18,11 +18,20 @@ import type {
   AuthSuccessResponseSchema,
   BaseSuccessResponseSchema,
   ConflictErrorSchema,
-  LoginDto,
   NotFoundErrorSchema,
   RefreshTokenDto,
   RefreshTokenResponseSchema,
-  RegisterDto,
+  ResetPasswordDataSchema,
+  ResetPasswordDto,
+  ResetPasswordRequestDto,
+  ResetPasswordResponseSchema,
+  ResetPasswordVerifyDto,
+  ResetPasswordVerifyResponseSchema,
+  SignInDto,
+  SignUpDto,
+  SignUpResendDto,
+  SignUpResponseSchema,
+  SignUpVerifyDto,
   ValidationErrorSchema,
 } from '.././schemas';
 
@@ -31,17 +40,17 @@ import { customInstance } from '../../mutator';
 /**
  * @summary Register a new user
  */
-export const register = (registerDto: RegisterDto, signal?: AbortSignal) => {
-  return customInstance<AuthSuccessResponseSchema>({
-    url: `/v1/auth/register`,
+export const signUp = (signUpDto: SignUpDto, signal?: AbortSignal) => {
+  return customInstance<SignUpResponseSchema>({
+    url: `/v1/auth/sign-up`,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    data: registerDto,
+    data: signUpDto,
     signal,
   });
 };
 
-export const getRegisterMutationOptions = <
+export const getSignUpMutationOptions = <
   TError =
     | ValidationErrorSchema
     | ApiErrorSchema
@@ -51,39 +60,38 @@ export const getRegisterMutationOptions = <
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof register>>,
+    Awaited<ReturnType<typeof signUp>>,
     TError,
-    { data: RegisterDto },
+    { data: SignUpDto },
     TContext
   >;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof register>>,
+  Awaited<ReturnType<typeof signUp>>,
   TError,
-  { data: RegisterDto },
+  { data: SignUpDto },
   TContext
 > => {
-  const mutationKey = ['register'];
+  const mutationKey = ['signUp'];
   const { mutation: mutationOptions } = options
     ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
     : { mutation: { mutationKey } };
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof register>>,
-    { data: RegisterDto }
-  > = (props) => {
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof signUp>>, { data: SignUpDto }> = (
+    props
+  ) => {
     const { data } = props ?? {};
 
-    return register(data);
+    return signUp(data);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type RegisterMutationResult = NonNullable<Awaited<ReturnType<typeof register>>>;
-export type RegisterMutationBody = RegisterDto;
-export type RegisterMutationError =
+export type SignUpMutationResult = NonNullable<Awaited<ReturnType<typeof signUp>>>;
+export type SignUpMutationBody = SignUpDto;
+export type SignUpMutationError =
   | ValidationErrorSchema
   | ApiErrorSchema
   | ApiErrorSchema
@@ -93,7 +101,7 @@ export type RegisterMutationError =
 /**
  * @summary Register a new user
  */
-export const useRegister = <
+export const useSignUp = <
   TError =
     | ValidationErrorSchema
     | ApiErrorSchema
@@ -104,37 +112,32 @@ export const useRegister = <
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof register>>,
+      Awaited<ReturnType<typeof signUp>>,
       TError,
-      { data: RegisterDto },
+      { data: SignUpDto },
       TContext
     >;
   },
   queryClient?: QueryClient
-): UseMutationResult<
-  Awaited<ReturnType<typeof register>>,
-  TError,
-  { data: RegisterDto },
-  TContext
-> => {
-  const mutationOptions = getRegisterMutationOptions(options);
+): UseMutationResult<Awaited<ReturnType<typeof signUp>>, TError, { data: SignUpDto }, TContext> => {
+  const mutationOptions = getSignUpMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * @summary Login user
+ * @summary Verify registration OTP or resend if needed
  */
-export const login = (loginDto: LoginDto, signal?: AbortSignal) => {
+export const signUpVerify = (signUpVerifyDto: SignUpVerifyDto, signal?: AbortSignal) => {
   return customInstance<AuthSuccessResponseSchema>({
-    url: `/v1/auth/login`,
+    url: `/v1/auth/sign-up/verify`,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    data: loginDto,
+    data: signUpVerifyDto,
     signal,
   });
 };
 
-export const getLoginMutationOptions = <
+export const getSignUpVerifyMutationOptions = <
   TError =
     | ValidationErrorSchema
     | ApiErrorSchema
@@ -144,33 +147,39 @@ export const getLoginMutationOptions = <
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof login>>,
+    Awaited<ReturnType<typeof signUpVerify>>,
     TError,
-    { data: LoginDto },
+    { data: SignUpVerifyDto },
     TContext
   >;
-}): UseMutationOptions<Awaited<ReturnType<typeof login>>, TError, { data: LoginDto }, TContext> => {
-  const mutationKey = ['login'];
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof signUpVerify>>,
+  TError,
+  { data: SignUpVerifyDto },
+  TContext
+> => {
+  const mutationKey = ['signUpVerify'];
   const { mutation: mutationOptions } = options
     ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
     : { mutation: { mutationKey } };
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof login>>, { data: LoginDto }> = (
-    props
-  ) => {
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof signUpVerify>>,
+    { data: SignUpVerifyDto }
+  > = (props) => {
     const { data } = props ?? {};
 
-    return login(data);
+    return signUpVerify(data);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type LoginMutationResult = NonNullable<Awaited<ReturnType<typeof login>>>;
-export type LoginMutationBody = LoginDto;
-export type LoginMutationError =
+export type SignUpVerifyMutationResult = NonNullable<Awaited<ReturnType<typeof signUpVerify>>>;
+export type SignUpVerifyMutationBody = SignUpVerifyDto;
+export type SignUpVerifyMutationError =
   | ValidationErrorSchema
   | ApiErrorSchema
   | ApiErrorSchema
@@ -178,9 +187,9 @@ export type LoginMutationError =
   | ConflictErrorSchema;
 
 /**
- * @summary Login user
+ * @summary Verify registration OTP or resend if needed
  */
-export const useLogin = <
+export const useSignUpVerify = <
   TError =
     | ValidationErrorSchema
     | ApiErrorSchema
@@ -191,15 +200,200 @@ export const useLogin = <
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof login>>,
+      Awaited<ReturnType<typeof signUpVerify>>,
       TError,
-      { data: LoginDto },
+      { data: SignUpVerifyDto },
       TContext
     >;
   },
   queryClient?: QueryClient
-): UseMutationResult<Awaited<ReturnType<typeof login>>, TError, { data: LoginDto }, TContext> => {
-  const mutationOptions = getLoginMutationOptions(options);
+): UseMutationResult<
+  Awaited<ReturnType<typeof signUpVerify>>,
+  TError,
+  { data: SignUpVerifyDto },
+  TContext
+> => {
+  const mutationOptions = getSignUpVerifyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * @summary Resend registration OTP
+ */
+export const signUpResend = (signUpResendDto: SignUpResendDto, signal?: AbortSignal) => {
+  return customInstance<SignUpResponseSchema>({
+    url: `/v1/auth/sign-up/resend-otp`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: signUpResendDto,
+    signal,
+  });
+};
+
+export const getSignUpResendMutationOptions = <
+  TError =
+    | ValidationErrorSchema
+    | ApiErrorSchema
+    | ApiErrorSchema
+    | NotFoundErrorSchema
+    | ConflictErrorSchema,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof signUpResend>>,
+    TError,
+    { data: SignUpResendDto },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof signUpResend>>,
+  TError,
+  { data: SignUpResendDto },
+  TContext
+> => {
+  const mutationKey = ['signUpResend'];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof signUpResend>>,
+    { data: SignUpResendDto }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return signUpResend(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SignUpResendMutationResult = NonNullable<Awaited<ReturnType<typeof signUpResend>>>;
+export type SignUpResendMutationBody = SignUpResendDto;
+export type SignUpResendMutationError =
+  | ValidationErrorSchema
+  | ApiErrorSchema
+  | ApiErrorSchema
+  | NotFoundErrorSchema
+  | ConflictErrorSchema;
+
+/**
+ * @summary Resend registration OTP
+ */
+export const useSignUpResend = <
+  TError =
+    | ValidationErrorSchema
+    | ApiErrorSchema
+    | ApiErrorSchema
+    | NotFoundErrorSchema
+    | ConflictErrorSchema,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof signUpResend>>,
+      TError,
+      { data: SignUpResendDto },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof signUpResend>>,
+  TError,
+  { data: SignUpResendDto },
+  TContext
+> => {
+  const mutationOptions = getSignUpResendMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * @summary Login user
+ */
+export const signIn = (signInDto: SignInDto, signal?: AbortSignal) => {
+  return customInstance<AuthSuccessResponseSchema>({
+    url: `/v1/auth/sign-in`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: signInDto,
+    signal,
+  });
+};
+
+export const getSignInMutationOptions = <
+  TError =
+    | ValidationErrorSchema
+    | ApiErrorSchema
+    | ApiErrorSchema
+    | NotFoundErrorSchema
+    | ConflictErrorSchema,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof signIn>>,
+    TError,
+    { data: SignInDto },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof signIn>>,
+  TError,
+  { data: SignInDto },
+  TContext
+> => {
+  const mutationKey = ['signIn'];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof signIn>>, { data: SignInDto }> = (
+    props
+  ) => {
+    const { data } = props ?? {};
+
+    return signIn(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SignInMutationResult = NonNullable<Awaited<ReturnType<typeof signIn>>>;
+export type SignInMutationBody = SignInDto;
+export type SignInMutationError =
+  | ValidationErrorSchema
+  | ApiErrorSchema
+  | ApiErrorSchema
+  | NotFoundErrorSchema
+  | ConflictErrorSchema;
+
+/**
+ * @summary Login user
+ */
+export const useSignIn = <
+  TError =
+    | ValidationErrorSchema
+    | ApiErrorSchema
+    | ApiErrorSchema
+    | NotFoundErrorSchema
+    | ConflictErrorSchema,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof signIn>>,
+      TError,
+      { data: SignInDto },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<Awaited<ReturnType<typeof signIn>>, TError, { data: SignInDto }, TContext> => {
+  const mutationOptions = getSignInMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -363,83 +557,14 @@ export const useLogout = <
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * @summary Request password reset
+ * @summary Change password
  */
-export const forgotPassword = (signal?: AbortSignal) => {
-  return customInstance<BaseSuccessResponseSchema>({
-    url: `/v1/auth/forgot-password`,
-    method: 'POST',
-    signal,
-  });
-};
-
-export const getForgotPasswordMutationOptions = <
-  TError =
-    | ValidationErrorSchema
-    | ApiErrorSchema
-    | ApiErrorSchema
-    | NotFoundErrorSchema
-    | ConflictErrorSchema,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof forgotPassword>>, TError, void, TContext>;
-}): UseMutationOptions<Awaited<ReturnType<typeof forgotPassword>>, TError, void, TContext> => {
-  const mutationKey = ['forgotPassword'];
-  const { mutation: mutationOptions } = options
-    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
-
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof forgotPassword>>, void> = () => {
-    return forgotPassword();
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type ForgotPasswordMutationResult = NonNullable<Awaited<ReturnType<typeof forgotPassword>>>;
-
-export type ForgotPasswordMutationError =
-  | ValidationErrorSchema
-  | ApiErrorSchema
-  | ApiErrorSchema
-  | NotFoundErrorSchema
-  | ConflictErrorSchema;
-
-/**
- * @summary Request password reset
- */
-export const useForgotPassword = <
-  TError =
-    | ValidationErrorSchema
-    | ApiErrorSchema
-    | ApiErrorSchema
-    | NotFoundErrorSchema
-    | ConflictErrorSchema,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof forgotPassword>>,
-      TError,
-      void,
-      TContext
-    >;
-  },
-  queryClient?: QueryClient
-): UseMutationResult<Awaited<ReturnType<typeof forgotPassword>>, TError, void, TContext> => {
-  const mutationOptions = getForgotPasswordMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-/**
- * @summary Reset password with token
- */
-export const resetPassword = (signal?: AbortSignal) => {
-  return customInstance<BaseSuccessResponseSchema>({
+export const resetPassword = (resetPasswordDto: ResetPasswordDto, signal?: AbortSignal) => {
+  return customInstance<ResetPasswordDataSchema>({
     url: `/v1/auth/reset-password`,
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: resetPasswordDto,
     signal,
   });
 };
@@ -453,8 +578,18 @@ export const getResetPasswordMutationOptions = <
     | ConflictErrorSchema,
   TContext = unknown,
 >(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof resetPassword>>, TError, void, TContext>;
-}): UseMutationOptions<Awaited<ReturnType<typeof resetPassword>>, TError, void, TContext> => {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof resetPassword>>,
+    TError,
+    { data: ResetPasswordDto },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof resetPassword>>,
+  TError,
+  { data: ResetPasswordDto },
+  TContext
+> => {
   const mutationKey = ['resetPassword'];
   const { mutation: mutationOptions } = options
     ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
@@ -462,15 +597,20 @@ export const getResetPasswordMutationOptions = <
       : { ...options, mutation: { ...options.mutation, mutationKey } }
     : { mutation: { mutationKey } };
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof resetPassword>>, void> = () => {
-    return resetPassword();
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof resetPassword>>,
+    { data: ResetPasswordDto }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return resetPassword(data);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
 export type ResetPasswordMutationResult = NonNullable<Awaited<ReturnType<typeof resetPassword>>>;
-
+export type ResetPasswordMutationBody = ResetPasswordDto;
 export type ResetPasswordMutationError =
   | ValidationErrorSchema
   | ApiErrorSchema
@@ -479,7 +619,7 @@ export type ResetPasswordMutationError =
   | ConflictErrorSchema;
 
 /**
- * @summary Reset password with token
+ * @summary Change password
  */
 export const useResetPassword = <
   TError =
@@ -494,28 +634,38 @@ export const useResetPassword = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof resetPassword>>,
       TError,
-      void,
+      { data: ResetPasswordDto },
       TContext
     >;
   },
   queryClient?: QueryClient
-): UseMutationResult<Awaited<ReturnType<typeof resetPassword>>, TError, void, TContext> => {
+): UseMutationResult<
+  Awaited<ReturnType<typeof resetPassword>>,
+  TError,
+  { data: ResetPasswordDto },
+  TContext
+> => {
   const mutationOptions = getResetPasswordMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
 /**
- * @summary Verify email with token
+ * @summary Resend password reset OTP
  */
-export const verifyEmail = (signal?: AbortSignal) => {
-  return customInstance<BaseSuccessResponseSchema>({
-    url: `/v1/auth/verify-email`,
+export const resetPasswordResend = (
+  resetPasswordRequestDto: ResetPasswordRequestDto,
+  signal?: AbortSignal
+) => {
+  return customInstance<ResetPasswordResponseSchema>({
+    url: `/v1/auth/reset-password/resend-otp`,
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: resetPasswordRequestDto,
     signal,
   });
 };
 
-export const getVerifyEmailMutationOptions = <
+export const getResetPasswordResendMutationOptions = <
   TError =
     | ValidationErrorSchema
     | ApiErrorSchema
@@ -524,25 +674,42 @@ export const getVerifyEmailMutationOptions = <
     | ConflictErrorSchema,
   TContext = unknown,
 >(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof verifyEmail>>, TError, void, TContext>;
-}): UseMutationOptions<Awaited<ReturnType<typeof verifyEmail>>, TError, void, TContext> => {
-  const mutationKey = ['verifyEmail'];
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof resetPasswordResend>>,
+    TError,
+    { data: ResetPasswordRequestDto },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof resetPasswordResend>>,
+  TError,
+  { data: ResetPasswordRequestDto },
+  TContext
+> => {
+  const mutationKey = ['resetPasswordResend'];
   const { mutation: mutationOptions } = options
     ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
     : { mutation: { mutationKey } };
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof verifyEmail>>, void> = () => {
-    return verifyEmail();
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof resetPasswordResend>>,
+    { data: ResetPasswordRequestDto }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return resetPasswordResend(data);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type VerifyEmailMutationResult = NonNullable<Awaited<ReturnType<typeof verifyEmail>>>;
-
-export type VerifyEmailMutationError =
+export type ResetPasswordResendMutationResult = NonNullable<
+  Awaited<ReturnType<typeof resetPasswordResend>>
+>;
+export type ResetPasswordResendMutationBody = ResetPasswordRequestDto;
+export type ResetPasswordResendMutationError =
   | ValidationErrorSchema
   | ApiErrorSchema
   | ApiErrorSchema
@@ -550,9 +717,9 @@ export type VerifyEmailMutationError =
   | ConflictErrorSchema;
 
 /**
- * @summary Verify email with token
+ * @summary Resend password reset OTP
  */
-export const useVerifyEmail = <
+export const useResetPasswordResend = <
   TError =
     | ValidationErrorSchema
     | ApiErrorSchema
@@ -562,11 +729,119 @@ export const useVerifyEmail = <
   TContext = unknown,
 >(
   options?: {
-    mutation?: UseMutationOptions<Awaited<ReturnType<typeof verifyEmail>>, TError, void, TContext>;
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof resetPasswordResend>>,
+      TError,
+      { data: ResetPasswordRequestDto },
+      TContext
+    >;
   },
   queryClient?: QueryClient
-): UseMutationResult<Awaited<ReturnType<typeof verifyEmail>>, TError, void, TContext> => {
-  const mutationOptions = getVerifyEmailMutationOptions(options);
+): UseMutationResult<
+  Awaited<ReturnType<typeof resetPasswordResend>>,
+  TError,
+  { data: ResetPasswordRequestDto },
+  TContext
+> => {
+  const mutationOptions = getResetPasswordResendMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * @summary Reset password with OTP
+ */
+export const resetPasswordVerify = (
+  resetPasswordVerifyDto: ResetPasswordVerifyDto,
+  signal?: AbortSignal
+) => {
+  return customInstance<ResetPasswordVerifyResponseSchema>({
+    url: `/v1/auth/reset-password/verify`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: resetPasswordVerifyDto,
+    signal,
+  });
+};
+
+export const getResetPasswordVerifyMutationOptions = <
+  TError =
+    | ValidationErrorSchema
+    | ApiErrorSchema
+    | ApiErrorSchema
+    | NotFoundErrorSchema
+    | ConflictErrorSchema,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof resetPasswordVerify>>,
+    TError,
+    { data: ResetPasswordVerifyDto },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof resetPasswordVerify>>,
+  TError,
+  { data: ResetPasswordVerifyDto },
+  TContext
+> => {
+  const mutationKey = ['resetPasswordVerify'];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof resetPasswordVerify>>,
+    { data: ResetPasswordVerifyDto }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return resetPasswordVerify(data);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ResetPasswordVerifyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof resetPasswordVerify>>
+>;
+export type ResetPasswordVerifyMutationBody = ResetPasswordVerifyDto;
+export type ResetPasswordVerifyMutationError =
+  | ValidationErrorSchema
+  | ApiErrorSchema
+  | ApiErrorSchema
+  | NotFoundErrorSchema
+  | ConflictErrorSchema;
+
+/**
+ * @summary Reset password with OTP
+ */
+export const useResetPasswordVerify = <
+  TError =
+    | ValidationErrorSchema
+    | ApiErrorSchema
+    | ApiErrorSchema
+    | NotFoundErrorSchema
+    | ConflictErrorSchema,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof resetPasswordVerify>>,
+      TError,
+      { data: ResetPasswordVerifyDto },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof resetPasswordVerify>>,
+  TError,
+  { data: ResetPasswordVerifyDto },
+  TContext
+> => {
+  const mutationOptions = getResetPasswordVerifyMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

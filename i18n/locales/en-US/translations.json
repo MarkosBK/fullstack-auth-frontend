@@ -23,6 +23,7 @@
     "register": {
       "title": "Register",
       "subtitle": "Hello! Register to get started",
+      "displayName": "Display Name",
       "username": "Username",
       "email": "Email",
       "password": "Password",
@@ -45,10 +46,12 @@
       "confirmPassword": "Confirm Password",
       "button": "Reset Password"
     },
-    "passwordChanged": {
-      "title": "Password Changed",
-      "subtitle": "Password Changed! Your password has been changed successfully.",
-      "button": "Back to Login"
+    "otp": {
+      "title": "Verify Your Email",
+      "subtitle": "We've sent a 6-digit verification code to your email address. Please enter the code below.",
+      "verifyButton": "Verify Code",
+      "didntReceive": "Didn't receive the code?",
+      "resendCode": "Resend Code"
     }
   },
   "validation": {
@@ -64,6 +67,10 @@
     "confirmPassword": {
       "required": "Password confirmation is required",
       "mismatch": "Passwords do not match"
+    },
+    "otp": {
+      "required": "Please enter the 6-digit code",
+      "invalid": "Please enter a valid 6-digit code"
     }
   }
 }

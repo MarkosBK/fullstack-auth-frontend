@@ -5,15 +5,12 @@
  * Complete authentication and user management API for web and mobile applications. Supports JWT authentication, role-based access control, and user management with caching.
  * OpenAPI spec version: 1.0
  */
+import type { AccountDataSchema } from './accountDataSchema';
 
-/**
- * Array of user roles
- */
-export type RoleName = (typeof RoleName)[keyof typeof RoleName];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const RoleName = {
-  ADMIN: 'ADMIN',
-  CUSTOMER: 'CUSTOMER',
-  SIGNUP: 'SIGNUP',
-} as const;
+export interface AccountResponseSchema {
+  success: boolean;
+  /** Response data */
+  data: AccountDataSchema;
+  /** Response timestamp */
+  timestamp: string;
+}

@@ -6,24 +6,9 @@
  * OpenAPI spec version: 1.0
  */
 
-export type ListUsersParams = {
-  /**
-   * Page number for pagination
-   * @minimum 1
-   */
-  page?: number;
-  /**
-   * Number of items per page
-   * @minimum 1
-   * @maximum 100
-   */
-  limit?: number;
-  /**
-   * Filter by email
-   */
-  email?: string;
-  /**
-   * Filter by display name
-   */
+export interface SignUpDto {
+  email: string;
+  /** @minLength 6 */
+  password: string;
   displayName?: string;
-};
+}

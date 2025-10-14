@@ -22,7 +22,7 @@ export function withRouteProtection<P extends object>(
     if (options.routeConfig) {
       const hasAccess = canAccessRoute(options.routeConfig);
       if (!hasAccess) {
-        return <Redirect href={options.routeConfig.redirectTo || paths.auth.login.path} />;
+        return <Redirect href={options.routeConfig.redirectTo || paths.auth.signIn.path} />;
       }
       return <Component {...props} />;
     }

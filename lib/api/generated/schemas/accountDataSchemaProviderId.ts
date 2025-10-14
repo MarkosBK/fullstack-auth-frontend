@@ -6,9 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 
-export interface RegisterDto {
-  email: string;
-  /** @minLength 6 */
-  password: string;
-  displayName?: string;
-}
+/**
+ * Provider ID
+ */
+export type AccountDataSchemaProviderId = { [key: string]: unknown };

@@ -24,6 +24,12 @@ export const createLoginValidationSchema = (t: TFunction) =>
 export const createRegisterValidationSchema = (t: TFunction) =>
   z
     .object({
+      displayName: z
+        .string()
+        .trim()
+        .min(1, t('validation.displayName.required'))
+        .min(2, t('validation.displayName.minLength'))
+        .max(50, t('validation.displayName.maxLength')),
       email: z
         .string()
         .trim()

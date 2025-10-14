@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 
-export type ListUsersParams = {
+export type ListAccountsParams = {
   /**
    * Page number for pagination
    * @minimum 1
@@ -19,11 +19,19 @@ export type ListUsersParams = {
    */
   limit?: number;
   /**
-   * Filter by email
+   * Filter by user email
    */
   email?: string;
   /**
-   * Filter by display name
+   * Filter by user display name
    */
   displayName?: string;
+  /**
+   * Filter by provider
+   */
+  provider?: string;
+  /**
+   * Filter by registration step
+   */
+  registrationStep?: string;
 };
