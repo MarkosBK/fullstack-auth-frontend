@@ -1,6 +1,9 @@
 {
   "name": "my-expo-app",
   "version": "1.0.0",
+  "engines": {
+    "node": "24.7.0"
+  },
   "scripts": {
     "android": "expo run:android",
     "ios": "expo run:ios",
