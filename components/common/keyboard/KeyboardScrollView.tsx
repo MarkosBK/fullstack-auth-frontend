@@ -25,7 +25,7 @@ const KeyboardScrollView = ({
     setContainerHeight(event.nativeEvent.layout.height);
   };
 
-  // Включаем скролл только если контент больше контейнера
+  // Enable scroll only if content is larger than container
   const shouldScroll = contentHeight > containerHeight;
 
   return (

@@ -3,17 +3,17 @@ import { defineConfig } from 'orval';
 export default defineConfig({
   api: {
     input: {
-      target: 'http://localhost:4000/api-json', // URL вашего Swagger JSON
+      target: 'http://localhost:4000/api-json', // URL of your Swagger JSON
     },
     output: {
-      target: './lib/api/generated', // Папка для сгенерированных файлов
+      target: './lib/api/generated', // Folder for generated files
       schemas: './lib/api/generated/schemas',
-      client: 'react-query', // Это правильно - Orval использует старое название
+      client: 'react-query', // This is correct - Orval uses the old name
       mode: 'tags-split',
       namingConvention: 'camelCase',
       override: {
         mutator: {
-          path: './lib/api/mutator.ts', // Кастомный клиент (ваш axios)
+          path: './lib/api/mutator.ts', // Custom client (your axios)
           name: 'customInstance',
         },
         query: {

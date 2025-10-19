@@ -16,7 +16,7 @@ export function withRouteProtection<P extends object>(
     const { isLoading, canAccessRoute } = useAuth();
 
     if (isLoading) {
-      return options.fallback || <div>Загрузка...</div>;
+      return options.fallback || <div>Loading...</div>;
     }
 
     if (options.routeConfig) {

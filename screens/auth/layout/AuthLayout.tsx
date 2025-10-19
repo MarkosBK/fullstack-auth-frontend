@@ -40,7 +40,7 @@ export const AuthLayout = ({ children, showBackButton = true, onBackPress }: Aut
           bottom: 0,
         }}
       />
-      {/* Фоновое изображение */}
+      {/* Background image */}
       {/* <ImageBackground
         source={require('@/assets/images/backround.png')}
         resizeMode="cover"
@@ -53,12 +53,12 @@ export const AuthLayout = ({ children, showBackButton = true, onBackPress }: Aut
         }}
       /> */}
 
-      {/* Размытие сверху */}
+      {/* Top blur */}
       {/* <BlurView className="absolute left-0 right-0 top-0 h-full" intensity={40} tint={'dark'} /> */}
 
-      {/* Контент */}
+      {/* Content */}
       <KeyboardScrollView className="flex-1 px-6 pt-16">
-        {/* Навигация назад */}
+        {/* Back navigation */}
         {showBackButton && (
           <TouchableOpacity
             onPress={handleBackPress}
@@ -67,7 +67,7 @@ export const AuthLayout = ({ children, showBackButton = true, onBackPress }: Aut
           </TouchableOpacity>
         )}
 
-        {/* Основной контент */}
+        {/* Main content */}
         <View className="flex-1 justify-center py-16">{children}</View>
       </KeyboardScrollView>
     </View>

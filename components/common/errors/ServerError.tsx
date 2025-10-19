@@ -17,20 +17,20 @@ export const ServerError = React.memo(({ error, onDismiss, className }: ServerEr
 
   if (!error) return null;
 
-  // Извлекаем сообщение об ошибке
+  // Extract error message
   const getErrorMessage = (): string => {
-    if (!error.error?.message) return 'Произошла неизвестная ошибка';
+    if (!error.error?.message) return 'An unknown error occurred';
 
-    // Если сообщение - массив строк
+    // If message is array of strings
     if (Array.isArray(error.error.message)) {
       return error.error.message.join(', ');
     }
 
-    // Если сообщение - строка
+    // If message is string
     return error.error.message;
   };
 
-  // Определяем тип ошибки по статусу
+  // Determine error type by status
   const getErrorType = () => {
     switch (error.status) {
       case 400:
@@ -55,11 +55,7 @@ export const ServerError = React.memo(({ error, onDismiss, className }: ServerEr
 
   return (
     <View
-      className={cn(
-        'mb-4 rounded-3xl border border-error-100/50 bg-error-500/5 p-4',
-        className
-      )}
- >
+      className={cn('mb-4 rounded-3xl border border-error-100/50 bg-error-500/5 p-4', className)}>
       <View className="mb-2 flex-row items-center justify-between">
         <View className="flex-row items-center">
           <Feather
@@ -68,27 +64,19 @@ export const ServerError = React.memo(({ error, onDismiss, className }: ServerEr
             color={themeColors['error-500']}
             className="mr-2"
           />
-          <LabelSmall className="text-error-700 font-semibold">
-            {errorType.title}
-          </LabelSmall>
+          <LabelSmall className="font-semibold text-error-700">{errorType.title}</LabelSmall>
         </View>
 
         {onDismiss && (
           <TouchableOpacity
             onPress={onDismiss}
             className="h-6 w-6 items-center justify-center rounded-full bg-error-100">
-            <Feather
-              name="x"
-              size={14}
-              color={themeColors['error-600']}
-            />
+            <Feather name="x" size={14} color={themeColors['error-600']} />
           </TouchableOpacity>
         )}
       </View>
 
-      <BodyMedium className="text-error-600 leading-5">
-        {errorMessage}
-      </BodyMedium>
+      <BodyMedium className="leading-5 text-error-600">{errorMessage}</BodyMedium>
     </View>
   );
 });

@@ -27,13 +27,13 @@ const StackWithTheme = () => {
   useEffect(() => {
     async function prepare() {
       try {
-        // Здесь можно выполнить предварительные загрузки данных
-        // Например: загрузка шрифтов, инициализация API, проверка аутентификации
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Минимальная задержка
+        // Here you can perform preliminary data loading
+        // For example: loading fonts, initializing API, checking authentication
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Minimum delay
       } catch (e) {
-        console.warn('Ошибка при подготовке приложения:', e);
+        console.warn('Error preparing application:', e);
       } finally {
-        // Скрываем splash screen после завершения подготовки
+        // Hide splash screen after preparation is complete
         await SplashScreen.hideAsync();
       }
     }

@@ -14,7 +14,7 @@ import { paths } from '@/lib/utils/paths';
 import { useResendTimer } from '@/lib/hooks';
 import { resetPasswordStorage, STORAGE_KEYS } from '@/lib/utils/storage';
 
-// Схема валидации для запроса восстановления пароля
+// Validation schema for password reset request
 const createResetPasswordRequestValidationSchema = (t: any) =>
   z.object({
     email: z

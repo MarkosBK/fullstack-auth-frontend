@@ -30,7 +30,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Загружаем сохраненную тему при инициализации
+  // Load saved theme on initialization
   useEffect(() => {
     const loadSavedTheme = async () => {
       try {
@@ -49,7 +49,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     loadSavedTheme();
   }, []);
 
-  // Сохраняем тему при изменении
+  // Save theme when changed
   useEffect(() => {
     if (!isLoading) {
       const saveTheme = async () => {

@@ -11,7 +11,7 @@ import { Button, Link, ServerError, Input } from '@/components/common';
 import { BodyMedium, HeadlineLarge } from '@/components/typography';
 import { ApiError } from '@/lib/api/client';
 
-// Схема валидации для нового пароля
+// Validation schema for new password
 const createNewPasswordValidationSchema = (t: any) =>
   z
     .object({
@@ -65,7 +65,7 @@ const ResetPasswordScreen = () => {
         AppHaptics.success();
         console.log('Password reset successfully');
 
-        // TODO: Редирект на экран входа
+        // TODO: Redirect to sign-in screen
       } catch (error: any) {
         AppHaptics.error();
         setServerError(error);

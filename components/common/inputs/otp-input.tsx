@@ -31,7 +31,7 @@ export const OTPInput: React.FC<OTPInputProps> = ({
 
   const onChangeCode = useCallback(
     (text: string, index: number) => {
-      // Если вставлен длинный текст (например, из SMS)
+      // If long text is pasted (e.g., from SMS)
       if (text.length > 1) {
         const newCodes = text.split('').slice(0, length);
         const paddedCodes = [...newCodes, ...Array(length - newCodes.length).fill('')];
@@ -39,19 +39,19 @@ export const OTPInput: React.FC<OTPInputProps> = ({
 
         onChangeText(newValueString);
 
-        // Фокус на последнее заполненное поле
+        // Focus on last filled field
         const lastFilledIndex = Math.min(newCodes.length - 1, length - 1);
         inputRefs.current[lastFilledIndex]?.focus();
         setFocusedIndex(lastFilledIndex);
 
-        // Если код заполнен, вызываем onComplete
+        // If code is complete, call onComplete
         if (newValueString.length === length && onComplete) {
           onComplete(newValueString);
         }
         return;
       }
 
-      // Обычный ввод одного символа
+      // Regular single character input
       const newCodes = value.split('');
       newCodes[index] = text;
       const newValueString = newCodes.join('');
@@ -63,7 +63,7 @@ export const OTPInput: React.FC<OTPInputProps> = ({
         setFocusedIndex(index + 1);
       }
 
-      // Если код заполнен, вызываем onComplete
+      // If code is complete, call onComplete
       if (newValueString.length === length && onComplete) {
         AppHaptics.success();
         onComplete(newValueString);
@@ -86,13 +86,13 @@ export const OTPInput: React.FC<OTPInputProps> = ({
       if (event.nativeEvent.key === 'Backspace') {
         AppHaptics.buttonPress();
 
-        // Если текущее поле заполнено, очищаем его
+        // If current field is filled, clear it
         if (value[index]) {
           const newCodes = value.split('');
           newCodes[index] = '';
           onChangeText(newCodes.join(''));
         } else if (index > 0) {
-          // Если текущее поле пустое, переходим к предыдущему и очищаем его
+          // If current field is empty, move to previous and clear it
           const newCodes = value.split('');
           newCodes[index - 1] = '';
           onChangeText(newCodes.join(''));

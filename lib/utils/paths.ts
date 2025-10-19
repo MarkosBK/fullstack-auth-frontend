@@ -1,7 +1,7 @@
 import { Href } from 'expo-router';
 import { RoleName, type UserDataSchema } from '@/lib/api/generated/schemas';
 
-// Типы для конфигурации маршрутов
+// Types for route configuration
 export interface RouteConfig {
   path: string | Href;
   auth: boolean;

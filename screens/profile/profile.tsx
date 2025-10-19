@@ -15,7 +15,7 @@ const ProfileScreen = () => {
       await logout();
     } catch (error: any) {
       const errorMessage = getErrorMessage(error);
-      Alert.alert('Ошибка', errorMessage);
+      Alert.alert('Error', errorMessage);
     }
   };
 
@@ -34,16 +34,16 @@ const ProfileScreen = () => {
       </TouchableOpacity>
 
       <LabelLarge className="mb-2 text-lg font-semibold">
-        Добро пожаловать, {currentUser?.displayName || 'Пользователь'}!
+        Welcome, {currentUser?.displayName || 'User'}!
       </LabelLarge>
       <LabelMedium className="text-gray-600">{currentUser?.email}</LabelMedium>
 
       <Button onPress={handleLogout} loading={isLoading}>
-        Выйти
+        Logout
       </Button>
 
       <Button onPress={() => refetchUser()} loading={isLoading}>
-        Обновить профиль
+        Update Profile
       </Button>
     </View>
   );

@@ -8,10 +8,10 @@ import type {
 } from './generated/schemas';
 import { tokenStorage } from '@/lib/utils/storage';
 
-// Конфигурация API
+// API configuration
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.100:4000';
 
-// Типы ошибок (используем сгенерированные Orval)
+// Error types (using generated Orval schemas)
 export type ApiError = { status: number } & (
   | ValidationErrorSchema
   | ApiErrorSchema

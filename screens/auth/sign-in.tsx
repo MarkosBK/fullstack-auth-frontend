@@ -35,7 +35,7 @@ const SignInScreen = () => {
   const onSubmit = useCallback(
     async (data: LoginFormData) => {
       AppHaptics.buttonPress();
-      setServerError(null); // Очищаем предыдущие ошибки
+      setServerError(null); // Clear previous errors
 
       const validationResult = loginValidationSchema.safeParse(data);
       if (!validationResult.success) {
@@ -48,7 +48,7 @@ const SignInScreen = () => {
         AppHaptics.success();
       } catch (error: any) {
         AppHaptics.error();
-        setServerError(error); // Устанавливаем ошибку сервера
+        setServerError(error); // Set server error
         console.log('error', error);
       }
     },

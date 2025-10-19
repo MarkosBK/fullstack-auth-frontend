@@ -32,13 +32,13 @@ export const Link = React.forwardRef<View, LinkProps>(
     const { themeColors } = useTheme();
 
     const handlePress = useCallback(() => {
-      AppHaptics.navigation(); // Вибрация при нажатии на ссылку
+      AppHaptics.navigation(); // Vibration when clicking link
 
       if (href) {
         if (replace) {
-          router.replace(href); // Заменить текущий экран
+          router.replace(href); // Replace current screen
         } else {
-          router.push(href); // Добавить в стек навигации
+          router.push(href); // Add to navigation stack
         }
       } else {
         onPress?.();

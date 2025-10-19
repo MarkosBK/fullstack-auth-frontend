@@ -2,7 +2,7 @@ import { apiClient } from './client';
 import { router } from 'expo-router';
 import { paths } from '@/lib/utils/paths';
 
-// Адаптер для Orval - связывает сгенерированные типы с вашим axios клиентом
+// Orval adapter - connects generated types with your axios client
 export const customInstance = async <T>(config: any): Promise<T> => {
   const { method, url, data, params } = config;
 

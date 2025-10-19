@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { TFunction } from 'i18next';
 
 /**
- * Создает схему валидации для входа
+ * Creates validation schema for login
  */
 export const createLoginValidationSchema = (t: TFunction) =>
   z.object({
@@ -19,7 +19,7 @@ export const createLoginValidationSchema = (t: TFunction) =>
   });
 
 /**
- * Создает схему валидации для регистрации
+ * Creates validation schema for registration
  */
 export const createRegisterValidationSchema = (t: TFunction) =>
   z
@@ -49,7 +49,7 @@ export const createRegisterValidationSchema = (t: TFunction) =>
     });
 
 /**
- * Создает схему валидации для восстановления пароля
+ * Creates validation schema for password reset
  */
 export const createForgotPasswordValidationSchema = (t: TFunction) =>
   z.object({
@@ -61,7 +61,7 @@ export const createForgotPasswordValidationSchema = (t: TFunction) =>
   });
 
 /**
- * Типы для форм
+ * Form types
  */
 export type LoginFormData = z.infer<ReturnType<typeof createLoginValidationSchema>>;
 export type RegisterFormData = z.infer<ReturnType<typeof createRegisterValidationSchema>>;
