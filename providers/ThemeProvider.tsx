@@ -2,7 +2,7 @@ import React, { createContext, useContext, useMemo, useState, useEffect } from '
 import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { colorScheme } from 'nativewind';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { themeStorage } from '@/lib/utils/storage';
 import { themes } from '../styles/color-theme';
 import { colors } from '@/styles/colors';
 
@@ -30,14 +30,12 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
   const [isLoading, setIsLoading] = useState(true);
 
-  const THEME_STORAGE_KEY = 'app_theme';
-
   // Загружаем сохраненную тему при инициализации
   useEffect(() => {
     const loadSavedTheme = async () => {
       try {
-        const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
-        if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+        const savedTheme = await themeStorage.getTheme();
+        if (savedTheme) {
           setCurrentTheme(savedTheme);
           colorScheme.set(savedTheme);
         }
@@ -56,7 +54,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     if (!isLoading) {
       const saveTheme = async () => {
         try {
-          await AsyncStorage.setItem(THEME_STORAGE_KEY, currentTheme);
+          await themeStorage.setTheme(currentTheme);
         } catch (error) {
           console.error('Error saving theme to storage:', error);
         }

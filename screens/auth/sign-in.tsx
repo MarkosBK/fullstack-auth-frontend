@@ -14,7 +14,7 @@ import { ApiError } from '@/lib/api/client';
 
 const SignInScreen = () => {
   const { t } = useTranslation();
-  const { login, isLoading } = useAuth();
+  const { signIn, isLoading } = useAuth();
   const [serverError, setServerError] = useState<ApiError | null>(null);
 
   const loginValidationSchema = createLoginValidationSchema(t);
@@ -44,7 +44,7 @@ const SignInScreen = () => {
       }
 
       try {
-        await login(data.email, data.password);
+        await signIn(data.email, data.password);
         AppHaptics.success();
       } catch (error: any) {
         AppHaptics.error();
@@ -52,7 +52,7 @@ const SignInScreen = () => {
         console.log('error', error);
       }
     },
-    [login, loginValidationSchema]
+    [signIn, loginValidationSchema]
   );
 
   return (

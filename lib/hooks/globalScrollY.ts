@@ -1,4 +1,4 @@
 import { makeMutable } from 'react-native-reanimated';
 
-// Глобальный SharedValue для скролла (создается вне React компонента)
+// global scroll Y value
 export const globalScrollY = makeMutable(0);

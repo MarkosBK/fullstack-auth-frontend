@@ -7,7 +7,7 @@
     "selectTitle": "Select Language",
     "selectSubtitle": "Choose your preferred app language",
     "en": "English",
-    "ru": "Russian"
+    "de": "German"
   },
   "auth": {
     "login": {
@@ -30,29 +30,45 @@
       "confirmPassword": "Confirm password",
       "button": "Register",
       "hasAccount": "Already have an account?",
-      "loginNow": "Login Now"
+      "loginNow": "Login Now",
+      "nextSendIn": "Next send in"
     },
-    "forgotPassword": {
+
+    "resetPassword": {
       "title": "Forgot Password?",
       "subtitle": "Don't worry! It occurs. Please enter the email address linked with your account.",
-      "email": "Email",
-      "button": "Send Code",
-      "rememberPassword": "Remember Password? Login"
-    },
-    "resetPassword": {
-      "title": "Create new password",
-      "subtitle": "Your new password must be unique from those previously used.",
-      "newPassword": "New Password",
-      "confirmPassword": "Confirm Password",
-      "button": "Reset Password"
+      "verifyTitle": "Verify Your Email",
+      "verifySubtitle": "We've sent a 6-digit verification code to your email address. Please enter the code below.",
+      "newPasswordTitle": "Create New Password",
+      "newPasswordSubtitle": "Your new password must be unique from those previously used.",
+      "requestButton": "Send Code",
+      "verifyButton": "Verify Code",
+      "resetButton": "Reset Password",
+      "didntReceive": "Didn't receive the code?",
+      "resendCode": "Resend Code",
+      "resendIn": "Resend in",
+      "resendAvailable": "Resend Code",
+      "rememberPassword": "Remember Password?",
+      "nextSendIn": "Next send in"
     },
     "otp": {
       "title": "Verify Your Email",
       "subtitle": "We've sent a 6-digit verification code to your email address. Please enter the code below.",
       "verifyButton": "Verify Code",
       "didntReceive": "Didn't receive the code?",
-      "resendCode": "Resend Code"
-    }
+      "resendCode": "Resend Code",
+      "resendIn": "Resend in",
+      "resendAvailable": "Resend Code"
+    },
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "password": "Password",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Enter your new password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "forgotPassword": "Forgot Password?",
+    "signIn": "Sign In"
   },
   "validation": {
     "email": {
@@ -62,6 +78,8 @@
     "password": {
       "required": "Password is required",
       "minLength": "Password must contain at least 6 characters",
+      "maxLength": "Password must not exceed 100 characters",
+      "mismatch": "Passwords do not match",
       "complexity": "Password must contain uppercase letter, lowercase letter and number"
     },
     "confirmPassword": {

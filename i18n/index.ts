@@ -1,23 +1,21 @@
 import i18n, { use as i18nUse, changeLanguage as i18nChangeLanguage } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import * as Localization from 'expo-localization';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { languageStorage } from '@/lib/utils/storage';
 import translationEn from './locales/en-US/translations.json';
-import translationRu from './locales/ru-RU/translations.json';
+import translationDe from './locales/de-DE/translations.json';
 
 const resources = {
   'en-US': { translation: translationEn },
   en: { translation: translationEn },
-  'ru-RU': { translation: translationRu },
-  ru: { translation: translationRu },
+  'de-DE': { translation: translationDe },
+  de: { translation: translationDe },
 };
-
-const LANGUAGE_KEY = '@app_language';
 
 const initI18n = async () => {
   try {
     // Try to get saved language preference
-    const savedLanguage = await AsyncStorage.getItem(LANGUAGE_KEY);
+    const savedLanguage = await languageStorage.getLanguage();
 
     // Determine which language to use
     let selectedLanguage = savedLanguage;
@@ -45,7 +43,7 @@ const initI18n = async () => {
       lng: selectedLanguage,
       fallbackLng: {
         'en-*': ['en-US', 'en'],
-        'ru-*': ['ru-RU', 'ru'],
+        'de-*': ['de-DE', 'de'],
         default: ['en-US'],
       },
       interpolation: {
@@ -58,7 +56,7 @@ const initI18n = async () => {
 
     // Save the selected language
     if (!savedLanguage) {
-      await AsyncStorage.setItem(LANGUAGE_KEY, selectedLanguage);
+      await languageStorage.setLanguage(selectedLanguage);
     }
   } catch (error) {
     console.error('Error initializing i18n:', error);
@@ -84,7 +82,7 @@ initI18n();
 export const changeLanguage = async (language: string) => {
   try {
     await i18nChangeLanguage(language);
-    await AsyncStorage.setItem(LANGUAGE_KEY, language);
+    await languageStorage.setLanguage(language);
   } catch (error) {
     console.error('Error changing language:', error);
   }

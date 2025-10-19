@@ -1,0 +1,93 @@
+{
+  "home": {
+    "welcome": "Willkommen in der App!",
+    "description": "Diese App unterstützt mehrere Sprachen."
+  },
+  "language": {
+    "selectTitle": "Sprache auswählen",
+    "selectSubtitle": "Wählen Sie Ihre bevorzugte App-Sprache",
+    "en": "Englisch",
+    "de": "Deutsch"
+  },
+  "auth": {
+    "login": {
+      "title": "Willkommen zurück! Freut mich, Sie wiederzusehen!",
+      "subtitle": "Geben Sie Ihre Anmeldedaten ein, um auf Ihr Konto zuzugreifen",
+      "email": "Geben Sie Ihre E-Mail ein",
+      "password": "Geben Sie Ihr Passwort ein",
+      "forgotPassword": "Passwort vergessen?",
+      "button": "Anmelden",
+      "noAccount": "Haben Sie noch kein Konto?",
+      "registerNow": "Jetzt registrieren"
+    },
+    "register": {
+      "title": "Registrieren",
+      "subtitle": "Hallo! Registrieren Sie sich, um zu beginnen",
+      "displayName": "Anzeigename",
+      "username": "Benutzername",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "button": "Registrieren",
+      "hasAccount": "Haben Sie bereits ein Konto?",
+      "loginNow": "Jetzt anmelden",
+      "nextSendIn": "Nächste Sendung in"
+    },
+    "resetPassword": {
+      "title": "Passwort vergessen?",
+      "subtitle": "Keine Sorge! Das passiert. Bitte geben Sie die E-Mail-Adresse ein, die mit Ihrem Konto verknüpft ist.",
+      "verifyTitle": "E-Mail bestätigen",
+      "verifySubtitle": "Wir haben einen 6-stelligen Bestätigungscode an Ihre E-Mail-Adresse gesendet. Bitte geben Sie den Code unten ein.",
+      "newPasswordTitle": "Neues Passwort erstellen",
+      "newPasswordSubtitle": "Ihr neues Passwort muss sich von den zuvor verwendeten unterscheiden.",
+      "requestButton": "Code senden",
+      "verifyButton": "Code bestätigen",
+      "resetButton": "Passwort zurücksetzen",
+      "didntReceive": "Code nicht erhalten?",
+      "resendCode": "Code erneut senden",
+      "resendIn": "Erneut senden in",
+      "resendAvailable": "Code erneut senden",
+      "rememberPassword": "Passwort erinnert?",
+      "nextSendIn": "Nächste Sendung in"
+    },
+    "otp": {
+      "title": "E-Mail bestätigen",
+      "subtitle": "Wir haben einen 6-stelligen Bestätigungscode an Ihre E-Mail-Adresse gesendet. Bitte geben Sie den Code unten ein.",
+      "verifyButton": "Code bestätigen",
+      "didntReceive": "Code nicht erhalten?",
+      "resendCode": "Code erneut senden",
+      "resendIn": "Erneut senden in",
+      "resendAvailable": "Code erneut senden"
+    },
+    "email": "E-Mail",
+    "emailPlaceholder": "Geben Sie Ihre E-Mail ein",
+    "password": "Passwort",
+    "newPassword": "Neues Passwort",
+    "newPasswordPlaceholder": "Geben Sie Ihr neues Passwort ein",
+    "confirmPassword": "Passwort bestätigen",
+    "confirmPasswordPlaceholder": "Bestätigen Sie Ihr Passwort",
+    "forgotPassword": "Passwort vergessen?",
+    "signIn": "Anmelden"
+  },
+  "validation": {
+    "email": {
+      "required": "E-Mail ist erforderlich",
+      "invalid": "Ungültiges E-Mail-Format"
+    },
+    "password": {
+      "required": "Passwort ist erforderlich",
+      "minLength": "Passwort muss mindestens 6 Zeichen enthalten",
+      "maxLength": "Passwort darf nicht mehr als 100 Zeichen haben",
+      "mismatch": "Passwörter stimmen nicht überein",
+      "complexity": "Passwort muss Großbuchstaben, Kleinbuchstaben und Zahlen enthalten"
+    },
+    "confirmPassword": {
+      "required": "Passwort-Bestätigung ist erforderlich",
+      "mismatch": "Passwörter stimmen nicht überein"
+    },
+    "otp": {
+      "required": "Bitte geben Sie den 6-stelligen Code ein",
+      "invalid": "Bitte geben Sie einen gültigen 6-stelligen Code ein"
+    }
+  }
+}

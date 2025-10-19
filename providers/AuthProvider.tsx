@@ -2,25 +2,24 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { useGetMe } from '@/lib/api/generated/users/users';
 import {
   useLogout,
+  useResetPassword,
+  useResetPasswordResend,
+  useResetPasswordRequest,
+  useResetPasswordVerify,
   useSignIn,
   useSignUp,
   useSignUpVerify,
+  useSignUpResend,
 } from '@/lib/api/generated/authentication/authentication';
 import { apiClient } from '@/lib/api/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { paths, type RouteConfig } from '@/lib/utils/paths';
 import { RegistrationStep, RoleName } from '@/lib/api/generated/schemas';
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { registrationStorage, resetPasswordStorage } from '@/lib/utils/storage';
 
 type AuthProviderProps = {
   children: React.ReactNode;
-};
-
-export const REGISTRATION_USER_KEY = '@registration_user';
-export type RegistrationUser = {
-  email: string;
-  displayName: string;
 };
 
 const AuthContext = createContext<ReturnType<typeof useProvideAuth> | undefined>(undefined);
@@ -30,8 +29,13 @@ const useProvideAuth = () => {
   const queryClient = useQueryClient();
   const loginMutation = useSignIn();
   const logoutMutation = useLogout();
-  const registerMutation = useSignUp();
-  const verifyOTPMutation = useSignUpVerify();
+  const signUpMutation = useSignUp();
+  const signUpResendMutation = useSignUpResend();
+  const signUpVerifyMutation = useSignUpVerify();
+  const resetPasswordRequestMutation = useResetPasswordRequest();
+  const resetPasswordResendMutation = useResetPasswordResend();
+  const resetPasswordVerifyMutation = useResetPasswordVerify();
+  const resetPasswordMutation = useResetPassword();
   const [isLoadingCallback, setIsLoadingCallback] = useState(false);
 
   const {
@@ -46,6 +50,8 @@ const useProvideAuth = () => {
     },
   });
 
+  const isAuthenticated = useMemo(() => !!userData && !userError, [userData, userError]);
+
   const checkAuthStatus = useCallback(async () => {
     const token = await apiClient.getAccessToken();
 
@@ -58,27 +64,35 @@ const useProvideAuth = () => {
     checkAuthStatus();
   }, [checkAuthStatus]);
 
-  const isAuthenticated = useMemo(() => !!userData && !userError, [userData, userError]);
+  useEffect(() => {
+    console.log('isAuthenticated', isAuthenticated);
+    if (isAuthenticated) {
+      registrationStorage.clearUser();
+      resetPasswordStorage.clearUser();
+    }
+  }, [isAuthenticated, router]);
 
   const isLoading = useMemo(
     () =>
       isLoadingUser ||
       loginMutation.isPending ||
       logoutMutation.isPending ||
-      registerMutation.isPending ||
-      verifyOTPMutation.isPending ||
+      signUpMutation.isPending ||
+      signUpVerifyMutation.isPending ||
+      signUpResendMutation.isPending ||
       isLoadingCallback,
     [
       isLoadingUser,
       loginMutation.isPending,
       logoutMutation.isPending,
-      registerMutation.isPending,
-      verifyOTPMutation.isPending,
+      signUpMutation.isPending,
+      signUpVerifyMutation.isPending,
+      signUpResendMutation.isPending,
       isLoadingCallback,
     ]
   );
 
-  const login = useCallback(
+  const signIn = useCallback(
     async (email: string, password: string): Promise<void> => {
       setIsLoadingCallback(true);
       return new Promise((resolve, reject) => {
@@ -113,11 +127,41 @@ const useProvideAuth = () => {
     [loginMutation, queryClient, refetchUser]
   );
 
-  const register = useCallback(
+  const signUpResend = useCallback(async (): Promise<void> => {
+    setIsLoadingCallback(true);
+    const user = await registrationStorage.getUser();
+
+    if (!user) {
+      router.push(paths.auth.signUp.path);
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      signUpResendMutation.mutate(
+        { data: { email: user.email.trim() } },
+        {
+          onSuccess: async (response) => {
+            try {
+              resolve();
+            } catch (error) {
+              reject(error);
+            } finally {
+              setIsLoadingCallback(false);
+            }
+          },
+          onError: (error) => {
+            setIsLoadingCallback(false);
+            reject(error);
+          },
+        }
+      );
+    });
+  }, [router, signUpResendMutation]);
+  const signUp = useCallback(
     async (email: string, password: string, displayName: string): Promise<void> => {
       setIsLoadingCallback(true);
       return new Promise((resolve, reject) => {
-        registerMutation.mutate(
+        signUpMutation.mutate(
           {
             data: {
               email: email.trim(),
@@ -129,10 +173,7 @@ const useProvideAuth = () => {
             onSuccess: async (response) => {
               try {
                 if (response.data.step === RegistrationStep.EMAIL_OTP_VERIFICATION) {
-                  AsyncStorage.setItem(
-                    REGISTRATION_USER_KEY,
-                    JSON.stringify({ email, displayName })
-                  );
+                  await registrationStorage.setUser({ email, displayName });
                   router.push(paths.auth.signUpVerify.path);
                   resolve();
                 } else if (response.data.step === 'COMPLETED') {
@@ -154,14 +195,13 @@ const useProvideAuth = () => {
         );
       });
     },
-    [registerMutation, router]
+    [signUpMutation, router]
   );
 
-  const verifyOTP = useCallback(
+  const signUpVerify = useCallback(
     async (otpCode: string): Promise<void> => {
       setIsLoadingCallback(true);
-      const userNotParsed = await AsyncStorage.getItem(REGISTRATION_USER_KEY);
-      const user: RegistrationUser | null = userNotParsed ? JSON.parse(userNotParsed) : null;
+      const user = await registrationStorage.getUser();
 
       if (!user) {
         router.push(paths.auth.signUp.path);
@@ -169,7 +209,7 @@ const useProvideAuth = () => {
       }
 
       return new Promise((resolve, reject) => {
-        verifyOTPMutation.mutate(
+        signUpVerifyMutation.mutate(
           { data: { email: user.email.trim(), otpCode: otpCode.trim() } },
           {
             onSuccess: async (response) => {
@@ -178,7 +218,7 @@ const useProvideAuth = () => {
                   await apiClient.setTokens(response.data.accessToken, response.data.refreshToken);
                   await refetchUser();
                   queryClient.invalidateQueries();
-                  AsyncStorage.removeItem(REGISTRATION_USER_KEY);
+                  await registrationStorage.clearUser();
                 } else {
                   reject(new Error('Tokens not received'));
                 }
@@ -197,7 +237,7 @@ const useProvideAuth = () => {
         );
       });
     },
-    [queryClient, refetchUser, router, verifyOTPMutation]
+    [queryClient, refetchUser, router, signUpVerifyMutation]
   );
 
   const logout = useCallback(async (): Promise<void> => {
@@ -225,6 +265,146 @@ const useProvideAuth = () => {
       });
     });
   }, [logoutMutation, queryClient]);
+
+  const resendPasswordReset = useCallback(async (): Promise<void> => {
+    setIsLoadingCallback(true);
+    const user = await resetPasswordStorage.getUser();
+
+    if (!user) {
+      router.push(paths.auth.signIn.path);
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      resetPasswordResendMutation.mutate(
+        { data: { email: user.email.trim() } },
+        {
+          onSuccess: async (response) => {
+            try {
+              resolve();
+            } catch (error) {
+              reject(error);
+            } finally {
+              setIsLoadingCallback(false);
+            }
+          },
+          onError: (error) => {
+            setIsLoadingCallback(false);
+            reject(error);
+          },
+        }
+      );
+    });
+  }, [resetPasswordResendMutation, router]);
+
+  const requestPasswordReset = useCallback(
+    async (email: string): Promise<void> => {
+      setIsLoadingCallback(true);
+      return new Promise((resolve, reject) => {
+        resetPasswordRequestMutation.mutate(
+          { data: { email: email.trim() } },
+          {
+            onSuccess: async (response) => {
+              try {
+                await resetPasswordStorage.setUser({ email: email.trim() });
+                router.push(paths.auth.resetPasswordVerify.path);
+                resolve();
+              } catch (error) {
+                reject(error);
+              } finally {
+                setIsLoadingCallback(false);
+              }
+            },
+            onError: (error) => {
+              setIsLoadingCallback(false);
+              reject(error);
+            },
+          }
+        );
+      });
+    },
+    [resetPasswordRequestMutation, router]
+  );
+
+  const verifyPasswordReset = useCallback(
+    async (otpCode: string): Promise<void> => {
+      setIsLoadingCallback(true);
+      const user = await resetPasswordStorage.getUser();
+
+      if (!user) {
+        router.push(paths.auth.signIn.path);
+        return;
+      }
+
+      return new Promise((resolve, reject) => {
+        resetPasswordVerifyMutation.mutate(
+          { data: { email: user.email.trim(), otpCode: otpCode.trim() } },
+          {
+            onSuccess: async (response) => {
+              try {
+                await resetPasswordStorage.setUser({
+                  email: user.email,
+                  resetToken: response.data.resetToken,
+                });
+                router.push(paths.auth.resetPassword.path);
+                resolve();
+              } catch (error) {
+                reject(error);
+              } finally {
+                setIsLoadingCallback(false);
+              }
+            },
+            onError: (error) => {
+              setIsLoadingCallback(false);
+              reject(error);
+            },
+          }
+        );
+      });
+    },
+    [resetPasswordVerifyMutation, router]
+  );
+
+  const resetPassword = useCallback(
+    async (newPassword: string): Promise<void> => {
+      setIsLoadingCallback(true);
+      const user = await resetPasswordStorage.getUser();
+
+      if (!user) {
+        router.push(paths.auth.signIn.path);
+        return;
+      }
+
+      return new Promise((resolve, reject) => {
+        if (!user.resetToken) {
+          reject(new Error('Reset token not found'));
+          return;
+        }
+
+        resetPasswordMutation.mutate(
+          { data: { resetToken: user.resetToken, newPassword: newPassword.trim() } },
+          {
+            onSuccess: async () => {
+              try {
+                await resetPasswordStorage.clearUser();
+                router.push(paths.auth.signIn.path);
+                resolve();
+              } catch (error) {
+                reject(error);
+              } finally {
+                setIsLoadingCallback(false);
+              }
+            },
+            onError: (error) => {
+              setIsLoadingCallback(false);
+              reject(error);
+            },
+          }
+        );
+      });
+    },
+    [resetPasswordMutation, router]
+  );
 
   const hasRole = useCallback(
     (role: RoleName[]): boolean => {
@@ -282,10 +462,15 @@ const useProvideAuth = () => {
     currentUser: userData?.data || null,
     isAuthenticated,
     isLoading,
-    login,
-    register,
-    verifyOTP,
+    signIn,
+    signUp,
+    signUpResend,
+    signUpVerify,
     logout,
+    requestPasswordReset,
+    resendPasswordReset,
+    verifyPasswordReset,
+    resetPassword,
     refetchUser,
     hasRole,
     canAccessRoute,

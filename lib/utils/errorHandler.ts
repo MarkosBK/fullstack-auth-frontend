@@ -9,32 +9,32 @@ interface StandardError {
 }
 
 /**
- * Извлекает сообщение об ошибке из любого типа ошибки
- * @param error - Любой тип ошибки
- * @returns Строка с сообщением об ошибке
+ * Extracts error message from any error type
+ * @param error - Any error type
+ * @returns String with error message
  */
 export function getErrorMessage(error: any): string {
-  // 1. ApiError из handleError (наш кастомный формат)
+  // 1. ApiError from handleError (our custom format)
   if (error?.error?.message) {
     return error.error.message;
   }
 
-  // 2. Прямая Axios ошибка с сервера
+  // 2. Axios error from server
   if (error?.response?.data?.error?.message) {
     return error.response.data.error.message;
   }
 
-  // 3. Простая ошибка с сервера
+  // 3. Simple error from server
   if (error?.response?.data?.message) {
     return error.response.data.message;
   }
 
-  // 4. Обычная JavaScript Error
+  // 4. Regular JavaScript Error
   if (error?.message) {
     return error.message;
   }
 
-  // 5. Строка
+  // 5. String
   if (typeof error === 'string') {
     return error;
   }
@@ -44,27 +44,27 @@ export function getErrorMessage(error: any): string {
 }
 
 /**
- * Извлекает код ошибки
- * @param error - Любой тип ошибки
- * @returns Код ошибки или undefined
+ * Extracts error code
+ * @param error - Any error type
+ * @returns Error code or undefined
  */
 export function getErrorCode(error: any): string | undefined {
   return error?.error?.code || error?.response?.data?.error?.code || error?.code || undefined;
 }
 
 /**
- * Извлекает HTTP статус код
- * @param error - Любой тип ошибки
- * @returns HTTP статус или undefined
+ * Extracts HTTP status code
+ * @param error - Any error type
+ * @returns HTTP status or undefined
  */
 export function getErrorStatus(error: any): number | undefined {
   return error?.response?.status || error?.error?.status || error?.status || undefined;
 }
 
 /**
- * Преобразует любую ошибку в стандартизированный формат
- * @param error - Любой тип ошибки
- * @returns Стандартизированная ошибка
+ * Converts any error to standardized format
+ * @param error - Any error type
+ * @returns Standardized error
  */
 export function normalizeError(error: any): StandardError {
   return {

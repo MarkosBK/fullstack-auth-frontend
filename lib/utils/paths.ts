@@ -29,6 +29,16 @@ export const paths = {
       auth: false,
       redirectTo: '/(app)/(tabs)/index',
     },
+    resetPasswordVerify: {
+      path: '/(auth)/reset-password-verify' as Href,
+      auth: false,
+      redirectTo: '/(app)/(tabs)/index',
+    },
+    resetPassword: {
+      path: '/(auth)/reset-password' as Href,
+      auth: false,
+      redirectTo: '/(app)/(tabs)/index',
+    },
     signUpVerify: {
       path: '/(auth)/sign-up-verify' as Href,
       auth: false,

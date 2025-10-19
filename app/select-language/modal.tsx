@@ -19,10 +19,10 @@ const Modal = () => {
       code: 'en',
     },
     {
-      id: 'ru-RU',
-      nativeName: 'Русский',
-      flag: '🇷🇺',
-      code: 'ru',
+      id: 'de-DE',
+      nativeName: 'Deutsch',
+      flag: '🇩🇪',
+      code: 'de',
     },
   ];
 

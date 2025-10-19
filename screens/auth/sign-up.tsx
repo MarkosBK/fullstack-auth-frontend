@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { REGISTRATION_USER_KEY, RegistrationUser, useAuth } from '@/providers/AuthProvider';
+import { useAuth } from '@/providers/AuthProvider';
 import { AppHaptics } from '@/lib/utils/haptics';
 import { paths } from '@/lib/utils/paths';
 import { AuthLayout } from '@/screens/auth/layout';
@@ -11,12 +11,17 @@ import { Input, Button, Link, ServerError } from '@/components/common';
 import { BodyMedium, HeadlineLarge } from '@/components/typography';
 import { createRegisterValidationSchema, type RegisterFormData } from './validation';
 import { ApiError } from '@/lib/api/client';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useResendTimer } from '@/lib/hooks';
+import { registrationStorage, STORAGE_KEYS } from '@/lib/utils/storage';
 
 const SignUpScreen = () => {
   const { t } = useTranslation();
-  const { register, isLoading } = useAuth();
+  const { signUp, isLoading } = useAuth();
   const [serverError, setServerError] = useState<ApiError | null>(null);
+
+  const { timeLeft, canResend, formatTime, startResendTimer } = useResendTimer({
+    timerKey: STORAGE_KEYS.SIGNUP_RESEND_TIMER,
+  });
 
   const registerValidationSchema = createRegisterValidationSchema(t);
 
@@ -48,21 +53,21 @@ const SignUpScreen = () => {
       }
 
       try {
-        await register(data.email, data.password, data.displayName);
+        await signUp(data.email, data.password, data.displayName);
         AppHaptics.success();
+        startResendTimer();
       } catch (error: any) {
         AppHaptics.error();
         setServerError(error);
         console.log('error', error);
       }
     },
-    [register, registerValidationSchema]
+    [signUp, registerValidationSchema, startResendTimer]
   );
 
   useEffect(() => {
     const getUser = async () => {
-      const userNotParsed = await AsyncStorage.getItem(REGISTRATION_USER_KEY);
-      const user: RegistrationUser | null = userNotParsed ? JSON.parse(userNotParsed) : null;
+      const user = await registrationStorage.getUser();
       if (user) {
         setValue('email', user.email);
         setValue('displayName', user.displayName);
@@ -151,9 +156,21 @@ const SignUpScreen = () => {
 
         <ServerError error={serverError} onDismiss={() => setServerError(null)} />
 
-        <Button size="large" loading={isLoading} onPress={handleSubmit(onSubmit)} className="mb-10">
-          {t('auth.register.button')}
-        </Button>
+        {canResend ? (
+          <Button
+            size="large"
+            loading={isLoading}
+            onPress={handleSubmit(onSubmit)}
+            className="mb-10">
+            {t('auth.register.button')}
+          </Button>
+        ) : (
+          <View className="bg-text-100 mb-10 flex items-center justify-center rounded-xl py-4">
+            <BodyMedium className="text-text-500">
+              {t('auth.register.nextSendIn')} {formatTime(timeLeft)}
+            </BodyMedium>
+          </View>
+        )}
 
         <Link href={paths.auth.signIn.path} replace className="self-center">
           <View className="flex flex-row gap-2">

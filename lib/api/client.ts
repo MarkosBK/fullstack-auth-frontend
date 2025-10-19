@@ -1,5 +1,4 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {
   BaseSuccessResponseSchema,
   ApiErrorSchema,
@@ -7,13 +6,10 @@ import type {
   NotFoundErrorSchema,
   ConflictErrorSchema,
 } from './generated/schemas';
+import { tokenStorage } from '@/lib/utils/storage';
 
 // Конфигурация API
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.100:4000';
-
-// Токены для аутентификации
-const TOKEN_KEY = 'access_token';
-const REFRESH_TOKEN_KEY = 'refresh_token';
 
 // Типы ошибок (используем сгенерированные Orval)
 export type ApiError = { status: number } & (
@@ -47,7 +43,7 @@ class ApiClient {
     // REQUEST INTERCEPTOR
     this.client.interceptors.request.use(
       async (config) => {
-        const token = await AsyncStorage.getItem(TOKEN_KEY);
+        const token = await tokenStorage.getAccessToken();
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -81,15 +77,14 @@ class ApiClient {
           this.isRefreshing = true;
 
           try {
-            const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
+            const refreshToken = await tokenStorage.getRefreshToken();
             if (refreshToken) {
               const response = await axios.post(`${API_BASE_URL}/v1/auth/refresh`, {
                 refreshToken,
               });
 
               const { accessToken, refreshToken: newRefreshToken } = response.data.data;
-              await AsyncStorage.setItem(TOKEN_KEY, accessToken);
-              await AsyncStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken);
+              await tokenStorage.setTokens(accessToken, newRefreshToken);
 
               this.processQueue(null, accessToken);
               originalRequest.headers.Authorization = `Bearer ${accessToken}`;
@@ -169,16 +164,15 @@ class ApiClient {
   }
 
   async setTokens(token: string, refreshToken: string) {
-    await AsyncStorage.setItem(TOKEN_KEY, token);
-    await AsyncStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+    await tokenStorage.setTokens(token, refreshToken);
   }
 
   async getAccessToken(): Promise<string | null> {
-    return AsyncStorage.getItem(TOKEN_KEY);
+    return tokenStorage.getAccessToken();
   }
 
   async logout() {
-    await AsyncStorage.multiRemove([TOKEN_KEY, REFRESH_TOKEN_KEY]);
+    await tokenStorage.clearTokens();
   }
 
   // BASE HTTP METHODS
