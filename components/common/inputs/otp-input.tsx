@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { TextInput, View } from 'react-native';
 import { cn } from '@/lib/utils/cn';
-import { useTheme } from '@/providers/ThemeProvider';
+import { useTheme } from '@/stores/theme.store';
 import { AppHaptics } from '@/lib/utils/haptics';
 
 interface OTPInputProps {

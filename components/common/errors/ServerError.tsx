@@ -3,7 +3,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { cn } from '@/lib/utils/cn';
 import { BodyMedium, LabelSmall } from '@/components/typography';
-import { useTheme } from '@/providers/ThemeProvider';
+import { useTheme } from '@/stores/theme.store';
 import { ApiError } from '@/lib/api/client';
 
 interface ServerErrorProps {

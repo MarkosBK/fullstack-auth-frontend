@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
-import { ThemeProvider, useTheme } from '../providers/ThemeProvider';
+import { ThemeProvider } from '../providers/ThemeProvider';
+import { useTheme } from '@/stores/theme.store';
 import { ApiProvider } from '../providers/ApiProvider';
 import '../styles/global.css';
 import '@/i18n';

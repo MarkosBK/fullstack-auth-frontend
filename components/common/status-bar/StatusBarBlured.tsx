@@ -1,7 +1,7 @@
 import React from 'react';
 import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useTheme } from '@/providers/ThemeProvider';
+import { useTheme } from '@/stores/theme.store';
 import Animated, { useAnimatedStyle, interpolate, Extrapolate } from 'react-native-reanimated';
 import { globalScrollY } from '@/lib/hooks/globalScrollY';
 

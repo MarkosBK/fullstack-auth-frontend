@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, TouchableOpacityProps, ActivityIndicator, View } from 'react-native';
 import { cn } from '@/lib/utils/cn';
 import { LabelLarge } from '@/components/typography';
-import { useTheme } from '@/providers/ThemeProvider';
+import { useTheme } from '@/stores/theme.store';
 
 interface ButtonProps extends TouchableOpacityProps {
   variant?: 'primary' | 'secondary' | 'outline' | 'glass';

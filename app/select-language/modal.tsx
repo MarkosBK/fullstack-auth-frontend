@@ -1,7 +1,12 @@
 import { Text, View, Pressable } from 'react-native';
 import { router } from 'expo-router';
-import { useTheme } from '../../providers/ThemeProvider';
-import { changeLanguage } from '../../i18n';
+import { useTheme } from '@/stores/theme.store';
+import {
+  useLanguage,
+  AVAILABLE_LANGUAGES,
+  LANGUAGE_NAMES,
+  type Language,
+} from '@/stores/language.store';
 import { useTranslation } from 'react-i18next';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Title, TitleMedium } from '@/components/typography';
@@ -9,28 +14,14 @@ import { AppHaptics } from '@/lib/utils/haptics';
 
 const Modal = () => {
   const { themeColors } = useTheme();
+  const { language, setLanguage } = useLanguage();
   const { t } = useTranslation();
 
-  const languages = [
-    {
-      id: 'en-US',
-      nativeName: 'English',
-      flag: '🇺🇸',
-      code: 'en',
-    },
-    {
-      id: 'de-DE',
-      nativeName: 'Deutsch',
-      flag: '🇩🇪',
-      code: 'de',
-    },
-  ];
-
-  const handleLanguageSelect = async (languageId: string) => {
+  const handleLanguageSelect = async (languageId: Language) => {
     AppHaptics.selection();
     // TODO: remove setTimeout (smooth transition)
     setTimeout(() => {
-      changeLanguage(languageId);
+      setLanguage(languageId);
     }, 100);
     router.back();
   };
@@ -46,33 +37,51 @@ const Modal = () => {
       </TitleMedium>
 
       <View className="flex-1">
-        {languages.map((language, index) => (
-          <Pressable
-            key={language.id}
-            className={`mb-3 rounded-2xl bg-background-500 p-4 ${
-              index === languages.length - 1 ? 'mb-0' : ''
-            }`}
-            onPress={() => handleLanguageSelect(language.id)}>
-            <View className="flex-row items-center">
-              <View className="mr-4 h-10 w-10 items-center justify-center rounded-full bg-primary-500/10">
-                <Text className="text-2xl">{language.flag}</Text>
-              </View>
+        {AVAILABLE_LANGUAGES.map((langId, index) => {
+          const langInfo = LANGUAGE_NAMES[langId];
+          const isSelected = language === langId;
 
-              <View className="flex-1">
-                <Text className="mb-1 text-lg font-semibold" style={{ color: themeColors.primary }}>
-                  {language.nativeName}
-                </Text>
-                <Text className="text-sm" style={{ color: themeColors['text-600'] }}>
-                  {t(`language.${language.code}`)}
-                </Text>
-              </View>
+          return (
+            <Pressable
+              key={langId}
+              className={`mb-3 rounded-2xl bg-background-500 p-4 ${
+                index === AVAILABLE_LANGUAGES.length - 1 ? 'mb-0' : ''
+              }`}
+              onPress={() => handleLanguageSelect(langId)}>
+              <View className="flex-row items-center">
+                <View className="mr-4 h-10 w-10 items-center justify-center rounded-full bg-primary-500/10">
+                  <Text className="text-2xl">{langInfo.flag}</Text>
+                </View>
 
-              <View className="ml-3">
-                <Ionicons name="chevron-forward" size={20} color={themeColors['primary-500']} />
+                <View className="flex-1">
+                  <Text
+                    className="mb-1 text-lg font-semibold"
+                    style={{ color: themeColors.primary }}>
+                    {langInfo.nativeName}
+                  </Text>
+                  <Text className="text-sm" style={{ color: themeColors['text-600'] }}>
+                    {t(`language.${langInfo.code}`)}
+                  </Text>
+                </View>
+
+                {isSelected && (
+                  <View className="ml-3">
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={24}
+                      color={themeColors['primary-500']}
+                    />
+                  </View>
+                )}
+                {!isSelected && (
+                  <View className="ml-3">
+                    <Ionicons name="chevron-forward" size={20} color={themeColors['primary-500']} />
+                  </View>
+                )}
               </View>
-            </View>
-          </Pressable>
-        ))}
+            </Pressable>
+          );
+        })}
       </View>
     </View>
   );

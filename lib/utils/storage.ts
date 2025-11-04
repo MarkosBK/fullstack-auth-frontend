@@ -2,10 +2,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Storage keys
 export const STORAGE_KEYS = {
+  AUTH_TEMP_DATA: '@auth_temp_data',
   TOKEN: '@access_token',
   REFRESH_TOKEN: '@refresh_token',
-  REGISTRATION_USER: '@registration_user',
-  RESET_PASSWORD_USER: '@reset_password_user',
   THEME: '@app_theme',
   LANGUAGE: '@app_language',
   SIGNUP_RESEND_TIMER: '@signup_resend_timer',
@@ -49,69 +48,6 @@ export const tokenStorage = {
 
   async clearTokens(): Promise<void> {
     await AsyncStorage.multiRemove([STORAGE_KEYS.TOKEN, STORAGE_KEYS.REFRESH_TOKEN]);
-  },
-};
-
-// Registration user storage methods
-export const registrationStorage = {
-  async setUser(user: RegistrationUser): Promise<void> {
-    await AsyncStorage.setItem(STORAGE_KEYS.REGISTRATION_USER, JSON.stringify(user));
-  },
-
-  async getUser(): Promise<RegistrationUser | null> {
-    const userNotParsed = await AsyncStorage.getItem(STORAGE_KEYS.REGISTRATION_USER);
-    return userNotParsed ? JSON.parse(userNotParsed) : null;
-  },
-
-  async clearUser(): Promise<void> {
-    await AsyncStorage.removeItem(STORAGE_KEYS.REGISTRATION_USER);
-  },
-};
-
-// Reset password user storage methods
-export const resetPasswordStorage = {
-  async setUser(user: ResetPasswordUser): Promise<void> {
-    await AsyncStorage.setItem(STORAGE_KEYS.RESET_PASSWORD_USER, JSON.stringify(user));
-  },
-
-  async getUser(): Promise<ResetPasswordUser | null> {
-    const userNotParsed = await AsyncStorage.getItem(STORAGE_KEYS.RESET_PASSWORD_USER);
-    return userNotParsed ? JSON.parse(userNotParsed) : null;
-  },
-
-  async clearUser(): Promise<void> {
-    await AsyncStorage.removeItem(STORAGE_KEYS.RESET_PASSWORD_USER);
-  },
-};
-
-// Theme storage methods
-export const themeStorage = {
-  async setTheme(theme: 'light' | 'dark'): Promise<void> {
-    await AsyncStorage.setItem(STORAGE_KEYS.THEME, theme);
-  },
-
-  async getTheme(): Promise<'light' | 'dark' | null> {
-    const theme = await AsyncStorage.getItem(STORAGE_KEYS.THEME);
-    return theme === 'light' || theme === 'dark' ? theme : null;
-  },
-
-  async clearTheme(): Promise<void> {
-    await AsyncStorage.removeItem(STORAGE_KEYS.THEME);
-  },
-};
-
-// Language storage methods
-export const languageStorage = {
-  async setLanguage(language: string): Promise<void> {
-    await AsyncStorage.setItem(STORAGE_KEYS.LANGUAGE, language);
-  },
-
-  async getLanguage(): Promise<string | null> {
-    return AsyncStorage.getItem(STORAGE_KEYS.LANGUAGE);
-  },
-
-  async clearLanguage(): Promise<void> {
-    await AsyncStorage.removeItem(STORAGE_KEYS.LANGUAGE);
   },
 };
 

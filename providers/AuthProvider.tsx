@@ -16,7 +16,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { paths, type RouteConfig } from '@/lib/utils/paths';
 import { RegistrationStep, RoleName } from '@/lib/api/generated/schemas';
 import { useRouter } from 'expo-router';
-import { registrationStorage, resetPasswordStorage } from '@/lib/utils/storage';
+import { authStore } from '@/stores/auth.store';
 
 type AuthProviderProps = {
   children: React.ReactNode;
@@ -67,8 +67,7 @@ const useProvideAuth = () => {
   useEffect(() => {
     console.log('isAuthenticated', isAuthenticated);
     if (isAuthenticated) {
-      registrationStorage.clearUser();
-      resetPasswordStorage.clearUser();
+      authStore.getState().clearAllTemporaryData();
     }
   }, [isAuthenticated, router]);
 
@@ -129,7 +128,7 @@ const useProvideAuth = () => {
 
   const signUpResend = useCallback(async (): Promise<void> => {
     setIsLoadingCallback(true);
-    const user = await registrationStorage.getUser();
+    const user = authStore.getState().registrationUser;
 
     if (!user) {
       router.push(paths.auth.signUp.path);
@@ -173,7 +172,7 @@ const useProvideAuth = () => {
             onSuccess: async (response) => {
               try {
                 if (response.data.step === RegistrationStep.EMAIL_OTP_VERIFICATION) {
-                  await registrationStorage.setUser({ email, displayName });
+                  authStore.getState().setRegistrationUser({ email, displayName });
                   router.push(paths.auth.signUpVerify.path);
                   resolve();
                 } else if (response.data.step === 'COMPLETED') {
@@ -201,7 +200,7 @@ const useProvideAuth = () => {
   const signUpVerify = useCallback(
     async (otpCode: string): Promise<void> => {
       setIsLoadingCallback(true);
-      const user = await registrationStorage.getUser();
+      const user = authStore.getState().registrationUser;
 
       if (!user) {
         router.push(paths.auth.signUp.path);
@@ -218,7 +217,7 @@ const useProvideAuth = () => {
                   await apiClient.setTokens(response.data.accessToken, response.data.refreshToken);
                   await refetchUser();
                   queryClient.invalidateQueries();
-                  await registrationStorage.clearUser();
+                  authStore.getState().clearRegistrationUser();
                 } else {
                   reject(new Error('Tokens not received'));
                 }
@@ -268,7 +267,7 @@ const useProvideAuth = () => {
 
   const resendPasswordReset = useCallback(async (): Promise<void> => {
     setIsLoadingCallback(true);
-    const user = await resetPasswordStorage.getUser();
+    const user = authStore.getState().resetPasswordUser;
 
     if (!user) {
       router.push(paths.auth.signIn.path);
@@ -306,7 +305,7 @@ const useProvideAuth = () => {
           {
             onSuccess: async (response) => {
               try {
-                await resetPasswordStorage.setUser({ email: email.trim() });
+                authStore.getState().setResetPasswordUser({ email: email.trim() });
                 router.push(paths.auth.resetPasswordVerify.path);
                 resolve();
               } catch (error) {
@@ -329,7 +328,7 @@ const useProvideAuth = () => {
   const verifyPasswordReset = useCallback(
     async (otpCode: string): Promise<void> => {
       setIsLoadingCallback(true);
-      const user = await resetPasswordStorage.getUser();
+      const user = authStore.getState().resetPasswordUser;
 
       if (!user) {
         router.push(paths.auth.signIn.path);
@@ -342,7 +341,7 @@ const useProvideAuth = () => {
           {
             onSuccess: async (response) => {
               try {
-                await resetPasswordStorage.setUser({
+                authStore.getState().setResetPasswordUser({
                   email: user.email,
                   resetToken: response.data.resetToken,
                 });
@@ -368,7 +367,7 @@ const useProvideAuth = () => {
   const resetPassword = useCallback(
     async (newPassword: string): Promise<void> => {
       setIsLoadingCallback(true);
-      const user = await resetPasswordStorage.getUser();
+      const user = authStore.getState().resetPasswordUser;
 
       if (!user) {
         router.push(paths.auth.signIn.path);
@@ -386,7 +385,7 @@ const useProvideAuth = () => {
           {
             onSuccess: async () => {
               try {
-                await resetPasswordStorage.clearUser();
+                authStore.getState().clearResetPasswordUser();
                 router.push(paths.auth.signIn.path);
                 resolve();
               } catch (error) {

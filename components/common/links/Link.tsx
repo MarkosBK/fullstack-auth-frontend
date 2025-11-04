@@ -3,7 +3,7 @@ import { TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 import { router, Href } from 'expo-router';
 import { cn } from '@/lib/utils/cn';
 import { BodyLarge, BodyMedium, BodySmall } from '@/components/typography';
-import { useTheme } from '@/providers/ThemeProvider';
+import { useTheme } from '@/stores/theme.store';
 import { AppHaptics } from '@/lib/utils/haptics';
 
 interface LinkProps extends TouchableOpacityProps {

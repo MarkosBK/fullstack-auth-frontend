@@ -3,7 +3,7 @@ import { View, TouchableOpacity, StatusBar } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
-import { useTheme } from '@/providers/ThemeProvider';
+import { useTheme } from '@/stores/theme.store';
 import KeyboardScrollView from '@/components/common/keyboard/KeyboardScrollView';
 
 interface AuthLayoutProps {

@@ -1,9 +1,12 @@
-import i18n, { use as i18nUse, changeLanguage as i18nChangeLanguage } from 'i18next';
+import i18n, { use as i18nUse } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import * as Localization from 'expo-localization';
-import { languageStorage } from '@/lib/utils/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import translationEn from './locales/en-US/translations.json';
 import translationDe from './locales/de-DE/translations.json';
+import { languageStore } from '@/stores/language.store';
+import { STORAGE_KEYS } from '@/lib/utils/storage';
+import type { Language } from '@/stores/language.store';
 
 const resources = {
   'en-US': { translation: translationEn },
@@ -14,28 +17,38 @@ const resources = {
 
 const initI18n = async () => {
   try {
-    // Try to get saved language preference
-    const savedLanguage = await languageStorage.getLanguage();
-
-    // Determine which language to use
-    let selectedLanguage = savedLanguage;
+    // get from zustand store
+    let selectedLanguage: Language | null = languageStore.getState().language;
 
     if (!selectedLanguage) {
-      // If no saved language, use device locale or fallback
+      // get from async storage
+      try {
+        const rawData = await AsyncStorage.getItem(STORAGE_KEYS.LANGUAGE);
+        if (rawData) {
+          const parsed = JSON.parse(rawData);
+          selectedLanguage = parsed?.state?.language || parsed?.language || null;
+        }
+      } catch {}
+    }
+
+    if (!selectedLanguage) {
+      // get from device locale
       const deviceLocales = Localization.getLocales();
       const deviceLocale = deviceLocales[0]?.languageTag || 'en-US';
       const languageCode = deviceLocale.split('-')[0];
-      // Try exact locale match first
-      if (deviceLocale in resources) {
-        selectedLanguage = deviceLocale;
-      }
 
-      // Then try language code match
-      else if (languageCode in resources) {
-        selectedLanguage = languageCode;
+      if (deviceLocale in resources) {
+        selectedLanguage = deviceLocale as Language;
+      } else if (languageCode in resources) {
+        selectedLanguage = languageCode === 'en' ? 'en-US' : 'de-DE';
       } else {
         selectedLanguage = 'en-US';
       }
+    }
+
+    // set to zustand store
+    if (languageStore.getState().language !== selectedLanguage) {
+      languageStore.setState({ language: selectedLanguage });
     }
 
     await i18nUse(initReactI18next).init({
@@ -53,11 +66,6 @@ const initI18n = async () => {
         useSuspense: false,
       },
     });
-
-    // Save the selected language
-    if (!savedLanguage) {
-      await languageStorage.setLanguage(selectedLanguage);
-    }
   } catch (error) {
     console.error('Error initializing i18n:', error);
 
@@ -78,14 +86,9 @@ const initI18n = async () => {
 
 initI18n();
 
-// Function to change language and save to storage
-export const changeLanguage = async (language: string) => {
-  try {
-    await i18nChangeLanguage(language);
-    await languageStorage.setLanguage(language);
-  } catch (error) {
-    console.error('Error changing language:', error);
-  }
+// Re-export changeLanguage from store for backward compatibility
+export const changeLanguage = async (language: Language) => {
+  await languageStore.getState().setLanguage(language);
 };
 
 export default i18n;

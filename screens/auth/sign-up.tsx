@@ -12,7 +12,8 @@ import { BodyMedium, HeadlineLarge } from '@/components/typography';
 import { createRegisterValidationSchema, type RegisterFormData } from './validation';
 import { ApiError } from '@/lib/api/client';
 import { useResendTimer } from '@/lib/hooks';
-import { registrationStorage, STORAGE_KEYS } from '@/lib/utils/storage';
+import { STORAGE_KEYS } from '@/lib/utils/storage';
+import { authStore } from '@/stores/auth.store';
 
 const SignUpScreen = () => {
   const { t } = useTranslation();
@@ -65,16 +66,14 @@ const SignUpScreen = () => {
     [signUp, registerValidationSchema, startResendTimer]
   );
 
+  const registrationUser = authStore((state) => state.registrationUser);
+
   useEffect(() => {
-    const getUser = async () => {
-      const user = await registrationStorage.getUser();
-      if (user) {
-        setValue('email', user.email);
-        setValue('displayName', user.displayName);
-      }
-    };
-    getUser();
-  }, [setValue]);
+    if (registrationUser) {
+      setValue('email', registrationUser.email);
+      setValue('displayName', registrationUser.displayName);
+    }
+  }, [registrationUser, setValue]);
 
   return (
     <AuthLayout showBackButton={false}>

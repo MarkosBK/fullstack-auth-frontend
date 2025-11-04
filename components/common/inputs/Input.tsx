@@ -3,7 +3,7 @@ import { TextInput, TextInputProps, View, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons';
 import { cn } from '@/lib/utils/cn';
 import { BodyMedium } from '@/components/typography';
-import { useTheme } from '@/providers/ThemeProvider';
+import { useTheme } from '@/stores/theme.store';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -77,7 +77,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(
           )}
         </View>
 
-        {error && <BodyMedium className="text-error-500 mt-1">{error}</BodyMedium>}
+        {error && <BodyMedium className="mt-1 text-error-500">{error}</BodyMedium>}
       </View>
     );
   }

@@ -1,6 +1,6 @@
 import { routeGuard } from '@/lib/guards/routeGuard';
 import { paths } from '@/lib/utils/paths';
-import { useTheme } from '@/providers/ThemeProvider';
+import { useTheme } from '@/stores/theme.store';
 import { Ionicons } from '@expo/vector-icons';
 import { router, Stack } from 'expo-router';
 import { TouchableOpacity } from 'react-native';

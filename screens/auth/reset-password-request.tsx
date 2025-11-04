@@ -12,7 +12,8 @@ import { BodyMedium, HeadlineLarge } from '@/components/typography';
 import { ApiError } from '@/lib/api/client';
 import { paths } from '@/lib/utils/paths';
 import { useResendTimer } from '@/lib/hooks';
-import { resetPasswordStorage, STORAGE_KEYS } from '@/lib/utils/storage';
+import { STORAGE_KEYS } from '@/lib/utils/storage';
+import { authStore } from '@/stores/auth.store';
 
 // Validation schema for password reset request
 const createResetPasswordRequestValidationSchema = (t: any) =>
@@ -74,15 +75,13 @@ const ResetPasswordRequestScreen = () => {
     [requestPasswordReset, startResendTimer]
   );
 
+  const resetPasswordUser = authStore((state) => state.resetPasswordUser);
+
   useEffect(() => {
-    const getUser = async () => {
-      const user = await resetPasswordStorage.getUser();
-      if (user) {
-        setValue('email', user.email);
-      }
-    };
-    getUser();
-  }, [setValue]);
+    if (resetPasswordUser) {
+      setValue('email', resetPasswordUser.email);
+    }
+  }, [resetPasswordUser, setValue]);
 
   return (
     <AuthLayout showBackButton={true}>
